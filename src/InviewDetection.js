@@ -1,4 +1,5 @@
 class InviewDetection {
+
 	constructor(options = {}) {
 		this.elements = options.elements || '[data-inview]';
 		this.duration = options.duration || 1;

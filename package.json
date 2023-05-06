@@ -22,9 +22,11 @@
 	},
 	"scripts": {
 		"build": "microbundle --format umd --name InviewDetection",
-		"dev": "microbundle watch"
+		"dev": "microbundle watch",
+		"lint": "eslint ./src/InviewDetection.js"
 	},
 	"devDependencies": {
+		"eslint": "^8.40.0",
 		"microbundle": "^0.15.1"
 	}
 }

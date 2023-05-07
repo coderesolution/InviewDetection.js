@@ -1,5 +1,4 @@
-class InviewDetection {
-
+export default class InviewDetection {
 	constructor(options = {}) {
 		this.elements = options.elements || '[data-inview]';
 		this.duration = options.duration || 1;
@@ -11,6 +10,7 @@ class InviewDetection {
 	}
 
 	init() {
+		console.log( 'InviewDetection has been instanstiated' );
 		/**
 		 * Loop through each parent
 		 */
@@ -228,7 +228,7 @@ class InviewDetection {
 			 * DEBUG
 			 */
 			if (oParent.hasAttribute('data-inview-debug')) {
-				console.group('uInviewDetection() debug instance');
+				console.group('InviewDetection debug instance');
 				console.log('Parent:', oParent);
 				console.log('Animating from:', aAnimateFromProperties);
 				console.log('Animating to:', aAnimateToProperties);
@@ -238,6 +238,3 @@ class InviewDetection {
 		});
 	}
 }
-
-// Export the InviewDetection class
-export default InviewDetection;

@@ -1,11 +1,28 @@
-# Dependencies
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
 node_modules
+dist
+bundled
+dist-ssr
+*.local
 
-# Apple OSX
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-._.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Lock files
-package-lock.json
-pnpm-lock.yaml
-pnpm-lock.yaml
+# GSAP Clubhouse
+docs/plugins/SplitText.min.js

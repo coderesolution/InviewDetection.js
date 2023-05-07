@@ -34,7 +34,6 @@
     var _proto = InviewDetection.prototype;
     _proto.init = function init() {
       var _this = this;
-      console.log('InviewDetection has been instanstiated');
       /**
        * Loop through each parent
        */

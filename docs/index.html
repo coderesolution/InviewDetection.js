@@ -10,14 +10,14 @@
 		<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1/bundled/lenis.min.js"></script>
 		<script type="module" src="./main.js"></script>
 	</head>
-	<body class="main">
-		<section data-inview>
+	<body class="main" data-inview data-inview-scope>
+		<section>
 			<p>One</p>
 		</section>
-		<section data-inview data-inview-scope>
-			<p data-inview-child>Two A</p>
-			<p data-inview-child>Two B</p>
-			<p data-inview-child>Two C</p>
+		<section data-inview-split>
+			<p>Two A<br>Two A2<br>Two A3<br>Two A4</p>
+			<p>Two B</p>
+			<p>Two C</p>
 		</section>
 		<section>
 			<p>Three</p>

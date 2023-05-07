@@ -18,18 +18,34 @@ The following <u>must</u> be instantiated before:
 
 ## Quick start
 
-### Install from NPM
+### Installation
 
-We have currently documented use exclusively by CDN or via our [Boilerplate](https://github.com/coderesolution/boilerplate):
+InviewDetection.js requires the GSAP library, as well as ScrollTrigger and SplitText (Club GreenSock) to work. You need to include all of them before InviewDetection.js.
+
+#### Boilerplate
+
+We have already included the file in our [Boilerplate](https://github.com/coderesolution/boilerplate).
+
+#### Use from CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/coderesolution/InviewDetection.js@v0.0.1/dist/InviewDetection.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+<script src="/path-to/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/coderesolution/InviewDetection.js@latest/bundled/InviewDetection.min.js"></script>
+<script>
+const inview = new InviewDetection(/*options*/);
+</script>
 ```
 
-InviewDetection.js requires the GSAP library to work. You need to import it before InviewDetection.js.
-Afterwards, instantiate InviewDetection.js with the following:
-
+#### Install NPM module
 ```js
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+import InviewDetection from './path-to/InviewDetection';
+
+gsap.registerPlugin(ScrollTrigger, SplitText);
 const inview = new InviewDetection(/*options*/);
 ```
 

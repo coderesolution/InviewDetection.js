@@ -29,12 +29,20 @@ We have already included the file in our [Boilerplate](https://github.com/codere
 #### Use from CDN
 
 ```html
+<!-- Include GSAP -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
 <script src="/path-to/SplitText.min.js"></script>
+
+<!-- Include InviewDetection -->
 <script src="https://cdn.jsdelivr.net/gh/coderesolution/InviewDetection.js@latest/bundled/InviewDetection.min.js"></script>
+
 <script>
-const inview = new InviewDetection(/*options*/);
+	// Register GSAP
+	gsap.registerPlugin(ScrollTrigger, SplitText);
+
+	// Instantiate InviewDetection
+	const inview = new InviewDetection(/*options*/);
 </script>
 ```
 
@@ -45,7 +53,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import InviewDetection from './path-to/InviewDetection';
 
+// Register GSAP
 gsap.registerPlugin(ScrollTrigger, SplitText);
+
+// Instantiate InviewDetection
 const inview = new InviewDetection(/*options*/);
 ```
 

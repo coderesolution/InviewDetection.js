@@ -35,7 +35,7 @@ We have already included the file in our [Boilerplate](https://github.com/codere
 <script src="/path-to/SplitText.min.js"></script>
 
 <!-- Include InviewDetection -->
-<script src="https://cdn.jsdelivr.net/gh/coderesolution/InviewDetection.js@latest/bundled/InviewDetection.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/coderesolution/InviewDetection.js/bundled/InviewDetection.min.js"></script>
 
 <script>
 	// Register GSAP

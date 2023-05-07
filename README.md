@@ -41,7 +41,7 @@ We have already included the file in our [Boilerplate](https://github.com/codere
 	// Register GSAP
 	gsap.registerPlugin(ScrollTrigger, SplitText);
 
-	// Instantiate InviewDetection
+	// Initialise InviewDetection
 	const inview = new InviewDetection(/*options*/);
 </script>
 ```
@@ -56,7 +56,7 @@ import InviewDetection from './path-to/InviewDetection';
 // Register GSAP
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-// Instantiate InviewDetection
+// Initialise InviewDetection
 const inview = new InviewDetection(/*options*/);
 ```
 

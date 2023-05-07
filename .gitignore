@@ -7,11 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node
 node_modules
-dist
-bundled
+
+# Misc.
 dist-ssr
-*.local
 
 # Editor directories and files
 .vscode/*
@@ -23,6 +23,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.local
 
 # Club GreenSock
 docs/plugins/SplitText.min.js

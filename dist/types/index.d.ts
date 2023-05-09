@@ -6,5 +6,7 @@ export default class InviewDetection {
     start: any;
     ease: any;
     stagger: any;
+    animationFrom: any;
+    animationTo: any;
     init(): void;
 }

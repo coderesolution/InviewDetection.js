@@ -19,4 +19,10 @@ function raf(time) {
 requestAnimationFrame(raf)
 
 /* Initialise InviewDetection.js */
-const inview = new InviewDetection();
+const inview = new InviewDetection({
+	animationFrom: {
+		opacity: 0,
+		'will-change': 'transform',
+		y: 200,
+	}
+});

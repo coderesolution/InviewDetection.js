@@ -6,6 +6,15 @@ export default class InviewDetection {
 		this.start = options.start || 'top 90%'
 		this.ease = options.ease || 'power4'
 		this.stagger = options.stagger || 0.155
+		this.animationFrom = options.animationFrom || {
+			opacity: 0,
+			'will-change': 'transform',
+			y: 20,
+		}
+		this.animationTo = options.animationTo || {
+			opacity: 1,
+			y: 0,
+		}
 		this.init()
 	}
 
@@ -13,7 +22,7 @@ export default class InviewDetection {
 		/**
 		 * Loop through each parent
 		 */
-		gsap.utils.toArray(this.elements).forEach((oParent) => {
+		gsap.utils.toArray(this.elements).forEach((oParent, iIndex) => {
 			/**
 			 * Determine what elements are to be animated
 			 */
@@ -142,11 +151,7 @@ export default class InviewDetection {
 			/**
 			 * Initial animate FROM properties
 			 */
-			var aAnimateFromProperties = {
-				opacity: 0,
-				'will-change': 'transform',
-				y: 20,
-			}
+			var aAnimateFromProperties = this.animationFrom
 
 			if (oParent.dataset.inviewFrom) {
 				aAnimateFromProperties = JSON.parse(oParent.dataset.inviewFrom)
@@ -156,10 +161,7 @@ export default class InviewDetection {
 			/**
 			 * Animate TO properties (based on scroll position)
 			 */
-			var aAnimateToProperties = {
-				opacity: 1,
-				y: 0,
-			}
+			var aAnimateToProperties = this.animationTo
 
 			if (oParent.dataset.inviewTo) {
 				aAnimateToProperties = JSON.parse(oParent.dataset.inviewTo)
@@ -187,15 +189,20 @@ export default class InviewDetection {
 				},
 			})
 
-			/**
-			 * DEBUG
-			 */
+			/* Debug mode */
 			if (oParent.hasAttribute('data-inview-debug')) {
-				console.group('InviewDetection debug instance')
-				console.log('Parent:', oParent)
-				console.log('Animating from:', aAnimateFromProperties)
-				console.log('Animating to:', aAnimateToProperties)
-				console.log('Queued elements:', aAnimatedElements)
+				console.group(`InviewDetection() debug instance (${iIndex + 1})`)
+				console.log({
+					parent: oParent,
+					elements: aAnimatedElements,
+					animationFrom: aAnimateFromProperties,
+					animationTo: aAnimateToProperties,
+					duration: this.duration,
+					delay: this.delay,
+					start: this.start,
+					ease: this.ease,
+					stagger: this.stagger,
+				})
 				console.groupEnd()
 			}
 		})

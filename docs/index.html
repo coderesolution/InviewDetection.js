@@ -10,17 +10,17 @@
 		<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1/bundled/lenis.min.js"></script>
 		<script type="module" src="./main.js"></script>
 	</head>
-	<body class="main" data-inview data-inview-scope>
-		<section>
+	<body class="main">
+		<section data-inview>
 			<p>One</p>
 		</section>
-		<section data-inview-split>
-			<p>Two A<br>Two A2<br>Two A3<br>Two A4</p>
-			<p>Two B</p>
-			<p>Two C</p>
+		<section data-inview data-inview-scope data-inview-debug data-inview-from='{"x": "-100", "rotation": "20"}' data-inview-to='{"x": "0", "rotation": "0"}'>
+			<p data-inview-child>Two A<br>Two A2<br>Two A3<br>Two A4</p>
+			<p data-inview-child>Two B</p>
+			<p data-inview-child>Two C</p>
 		</section>
-		<section>
-			<p>Three</p>
+		<section data-inview data-inview-scope>
+			<p data-inview-child>Three</p>
 		</section>
 	</body>
 </html>

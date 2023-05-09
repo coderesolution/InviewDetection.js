@@ -62,7 +62,7 @@ const inview = new InviewDetection(/*options*/);
 
 ## Defaults
 
-You can configure InviewDetection.js via options:
+You can configure InviewDetection.js default via options (and overwrite them on a per-animation basis using modifiers):
 
 ```js
 const inview = new InviewDetection({
@@ -71,7 +71,16 @@ const inview = new InviewDetection({
 	delay: 1,
 	start: 'top 90%',
 	ease: 'power4',
-	stagger: 0.155
+	stagger: 0.155,
+	animationFrom: {
+		opacity: 0,
+		'will-change': 'transform',
+		y: 20,
+	},
+	animationTo: {
+		opacity: 1,
+		y: 0,
+	}
 });
 ```
 
@@ -83,6 +92,8 @@ const inview = new InviewDetection({
 | `start` |  `string` | ScrollTrigger's starting position. Defaults to `top 90%` |
 | `ease` |  `string` | Easing of animation ([help](https://greensock.com/docs/Easing)). Defaults to `power4` |
 | `stagger` |  `number` | Time between each animation. Defaults to `.155` |
+| `animationFrom` |  `json` | The beginning of each animation. Defaults to `{ opacity: 0, 'will-change': 'transform', y: 20 }}` |
+| `animationTo` |  `json` | The ending of each animation. Defaults to `{ opacity: 1, y: 0 }}` |
 
 ## Instructions
 
@@ -115,10 +126,6 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | Name | Type | Description |
 | :--- | :---: | :--- |
 | `data-inview-order` | `number` | Apply an index to scoped elements, either `[data-inview-child]` or `[data-inview-split]` or elements specified in the respective parent's `[data-inview-scope]`. This will adjust the order of the element within the animation sequence. Negative numbers appear first, then positive numbers |
-
-## Planned
-
-1. Remove default animation effect of opacity and y and set them as the default `data-inview-from` and `data-inview-to` values.
 
 ## Examples of use
 

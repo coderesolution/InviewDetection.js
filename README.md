@@ -117,15 +117,10 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | `data-inview-duration` | `number` | Duration of each element transition. Defaults to `1` |
 | `data-inview-delay` | `number` | Delay before entire sequence begins. Defaults to `1` |
 | `data-inview-ease` | `string` | GSAP easing. Defaults to `power4` |
-| `data-inview-start` | `string` | When animation begins. Defaults to `top 90%` |
-| `data-inview-from` | `json` | Apply custom `gsap.from()` properties for every element (by default sets opacity to 0 and y to 20px). Example: `{"yPercent": "0", "rotation": "0"}` |
-| `data-inview-to` | `json` | Apply custom `gsap.to()` properties for every element (by default sets opacity to 1 and y to 0). Example: `{"yPercent": "-100", "rotation": "5"}` |
-
-### Adjust queue
-
-| Name | Type | Description |
-| :--- | :---: | :--- |
 | `data-inview-order` | `number` | Apply an index to scoped elements, either `[data-inview-child]` or `[data-inview-split]` or elements specified in the respective parent's `[data-inview-scope]`. This will adjust the order of the element within the animation sequence. Negative numbers appear first, then positive numbers |
+| `data-inview-start` | `string` | When animation begins. Defaults to `top 90%` |
+| `data-inview-from` | `json` | Apply custom `gsap.from()` properties for every element (by default sets opacity to 0 and y to 20px). Example: `{"opacity": "0", "y": "20", "rotation": "0"}` |
+| `data-inview-to` | `json` | Apply custom `gsap.to()` properties for every element (by default sets opacity to 1 and y to 0). Example: `{"opacity": "1", "y": "0", "rotation": "10"}` |
 
 ## Examples of use
 

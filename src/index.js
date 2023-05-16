@@ -71,48 +71,47 @@ export default class InviewDetection {
 	}
 
 	addSplitElements(parent, animatedElements) {
-		if (parent.querySelectorAll(':scope *:where([data-inview-split])')) {
-			let elementsToSplit = []
+		const splitElements = parent.querySelectorAll(':scope *:where([data-inview-split])');
+		const splitElementsParent = Array.from(splitElements).filter((element) => element.dataset.inviewSplit);
+		const selfToSplit = Array.from(splitElements).filter((element) => !element.dataset.inviewSplit);
 
-			const splitElements = parent.querySelectorAll(':scope *:where([data-inview-split])')
-			const splitElementsParent = Array.from(splitElements).filter((element) => element.dataset.inviewSplit)
-			const selfToSplit = Array.from(splitElements).filter((element) => !element.dataset.inviewSplit)
+		let elementsToSplit = [...selfToSplit, ...this.getSplitChildren(splitElementsParent)];
 
-			if (selfToSplit.length > 0) {
-				elementsToSplit = Array.prototype.concat.apply(elementsToSplit, selfToSplit)
+		elementsToSplit.forEach((splitElement) => this.addSplitElement(splitElement, animatedElements));
+	}
+
+	getSplitChildren(splitElementsParent) {
+		let splitChildren = [];
+
+		splitElementsParent.forEach((splitParent) => {
+			splitChildren = [...splitChildren, ...splitParent.querySelectorAll(':scope ' + splitParent.dataset.inviewSplit)];
+		});
+
+		return splitChildren;
+	}
+
+	addSplitElement(splitElement, animatedElements) {
+		let order = this.findClosestParentOrderAttr(splitElement);
+		const splitChildren = new SplitText(splitElement, {
+			type: 'lines',
+			linesClass: 'lineChild',
+		});
+
+		splitChildren.lines.forEach((line) => {
+			if (order) {
+				order += 0.01;
+				line.dataset.inviewOrder = order.toFixed(2);
+				animatedElements.push({
+					el: line,
+					order: order,
+				});
+			} else {
+				animatedElements.push({
+					el: line,
+					order: false,
+				});
 			}
-
-			if (splitElementsParent.length > 0) {
-				splitElementsParent.forEach((splitParent) => {
-					const splitChildren = splitParent.querySelectorAll(':scope ' + splitParent.dataset.inviewSplit)
-					elementsToSplit = Array.prototype.concat.apply(elementsToSplit, splitChildren)
-				})
-			}
-
-			elementsToSplit.forEach((splitElement) => {
-				let order = this.findClosestParentOrderAttr(splitElement)
-				const splitChildren = new SplitText(splitElement, {
-					type: 'lines',
-					linesClass: 'lineChild',
-				})
-
-				splitChildren.lines.forEach((line) => {
-					if (order) {
-						order += 0.01
-						line.dataset.inviewOrder = order.toFixed(2)
-						animatedElements.push({
-							el: line,
-							order: order,
-						})
-					} else {
-						animatedElements.push({
-							el: line,
-							order: false,
-						})
-					}
-				})
-			})
-		}
+		});
 	}
 
 	orderAnimatedElements(animatedElements) {

@@ -1,26 +1,33 @@
 export default class InviewDetection {
 	constructor(options = {}) {
+		this.defaultOptions = {
+			elements: '[data-inview]',
+			duration: 1,
+			delay: 0.4,
+			start: 'top 90%',
+			ease: 'power4',
+			stagger: 0.095,
+			animationFrom: {
+				opacity: 0,
+				'will-change': 'transform',
+				y: 20,
+			},
+			animationTo: {
+				opacity: 1,
+				y: 0,
+			},
+		}
+		this.options = { ...this.defaultOptions, ...options }
 		this.triggers = []
-		this.elements = options.elements || '[data-inview]'
-		this.duration = options.duration || 1
-		this.delay = options.delay || 0.4
-		this.start = options.start || 'top 90%'
-		this.ease = options.ease || 'power4'
-		this.stagger = options.stagger || 0.095
-		this.animationFrom = options.animationFrom || {
-			opacity: 0,
-			'will-change': 'transform',
-			y: 20,
-		}
-		this.animationTo = options.animationTo || {
-			opacity: 1,
-			y: 0,
-		}
 		this.init()
 	}
 
+	getOption(optionName) {
+		return this.options[optionName]
+	}
+
 	init() {
-		gsap.utils.toArray(this.elements).forEach((parent, index) => {
+		gsap.utils.toArray(this.getOption('elements')).forEach((parent, index) => {
 			let animatedElements = []
 
 			if (!parent.hasAttribute('data-inview-scope')) {
@@ -71,47 +78,50 @@ export default class InviewDetection {
 	}
 
 	addSplitElements(parent, animatedElements) {
-		const splitElements = parent.querySelectorAll(':scope *:where([data-inview-split])');
-		const splitElementsParent = Array.from(splitElements).filter((element) => element.dataset.inviewSplit);
-		const selfToSplit = Array.from(splitElements).filter((element) => !element.dataset.inviewSplit);
+		const splitElements = parent.querySelectorAll(':scope *:where([data-inview-split])')
+		const splitElementsParent = Array.from(splitElements).filter((element) => element.dataset.inviewSplit)
+		const selfToSplit = Array.from(splitElements).filter((element) => !element.dataset.inviewSplit)
 
-		let elementsToSplit = [...selfToSplit, ...this.getSplitChildren(splitElementsParent)];
+		let elementsToSplit = [...selfToSplit, ...this.getSplitChildren(splitElementsParent)]
 
-		elementsToSplit.forEach((splitElement) => this.addSplitElement(splitElement, animatedElements));
+		elementsToSplit.forEach((splitElement) => this.addSplitElement(splitElement, animatedElements))
 	}
 
 	getSplitChildren(splitElementsParent) {
-		let splitChildren = [];
+		let splitChildren = []
 
 		splitElementsParent.forEach((splitParent) => {
-			splitChildren = [...splitChildren, ...splitParent.querySelectorAll(':scope ' + splitParent.dataset.inviewSplit)];
-		});
+			splitChildren = [
+				...splitChildren,
+				...splitParent.querySelectorAll(':scope ' + splitParent.dataset.inviewSplit),
+			]
+		})
 
-		return splitChildren;
+		return splitChildren
 	}
 
 	addSplitElement(splitElement, animatedElements) {
-		let order = this.findClosestParentOrderAttr(splitElement);
+		let order = this.findClosestParentOrderAttr(splitElement)
 		const splitChildren = new SplitText(splitElement, {
 			type: 'lines',
 			linesClass: 'lineChild',
-		});
+		})
 
 		splitChildren.lines.forEach((line) => {
 			if (order) {
-				order += 0.01;
-				line.dataset.inviewOrder = order.toFixed(2);
+				order += 0.01
+				line.dataset.inviewOrder = order.toFixed(2)
 				animatedElements.push({
 					el: line,
 					order: order,
-				});
+				})
 			} else {
 				animatedElements.push({
 					el: line,
 					order: false,
-				});
+				})
 			}
-		});
+		})
 	}
 
 	orderAnimatedElements(animatedElements) {
@@ -125,8 +135,8 @@ export default class InviewDetection {
 	}
 
 	animateElements(parent, animatedElements, index) {
-		let animationFromProperties = this.animationFrom
-		let animationToProperties = this.animationTo
+		let animationFromProperties = this.getOption('animationFrom')
+		let animationToProperties = this.getOption('animationTo')
 
 		try {
 			if (parent.dataset.inviewFrom) {
@@ -144,15 +154,15 @@ export default class InviewDetection {
 
 		const trigger = ScrollTrigger.create({
 			trigger: parent,
-			start: parent.dataset.inviewStart || this.start,
+			start: parent.dataset.inviewStart || this.getOption('start'),
 			onEnter: () => {
 				gsap.to(animatedElements, {
 					...animationToProperties,
-					duration: parent.dataset.inviewDuration || this.duration,
-					delay: parent.dataset.inviewDelay || this.delay,
-					ease: parent.dataset.inviewEase || this.ease,
+					duration: parent.dataset.inviewDuration || this.getOption('duration'),
+					delay: parent.dataset.inviewDelay || this.getOption('delay'),
+					ease: parent.dataset.inviewEase || this.getOption('ease'),
 					stagger: {
-						each: parent.dataset.inviewStagger || this.stagger,
+						each: parent.dataset.inviewStagger || this.getOption('stagger'),
 						from: 'start',
 					},
 				})
@@ -180,17 +190,17 @@ export default class InviewDetection {
 			elements: animatedElements,
 			animationFrom: animationFromProperties,
 			animationTo: animationToProperties,
-			duration: this.duration,
-			delay: this.delay,
-			start: this.start,
-			ease: this.ease,
-			stagger: this.stagger,
+			duration: this.getOption('duration'),
+			delay: this.getOption('delay'),
+			start: this.getOption('start'),
+			ease: this.getOption('ease'),
+			stagger: this.getOption('stagger'),
 		})
 		console.groupEnd()
 	}
 
 	refresh() {
-		ScrollTrigger.refresh();
+		ScrollTrigger.refresh()
 	}
 
 	stop() {
@@ -198,18 +208,18 @@ export default class InviewDetection {
 		this.triggers.forEach((st) => st.kill())
 
 		// Kill all gsap animations of the elements
-		gsap.utils.toArray(this.elements).forEach((element) => {
-			gsap.killTweensOf(element);
+		gsap.utils.toArray(this.getOption('elements')).forEach((element) => {
+			gsap.killTweensOf(element)
 		})
 	}
 
 	restart() {
 		// Kill all gsap animations of the elements
-		gsap.utils.toArray(this.elements).forEach((element) => {
-			gsap.killTweensOf(element);
-		});
+		gsap.utils.toArray(this.getOption('elements')).forEach((element) => {
+			gsap.killTweensOf(element)
+		})
 
 		// Reinitialize everything
-		this.init();
+		this.init()
 	}
 }

@@ -26,3 +26,9 @@ const inview = new InviewDetection({
 		y: 200,
 	}
 });
+
+// setTimeout( () => {
+//
+// 	inview.restart();
+//
+// }, 3000 );

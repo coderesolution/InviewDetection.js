@@ -1,5 +1,6 @@
 export default class InviewDetection {
 	constructor(options = {}) {
+		this.triggers = []
 		this.elements = options.elements || '[data-inview]'
 		this.duration = options.duration || 1
 		this.delay = options.delay || 0.4
@@ -142,7 +143,8 @@ export default class InviewDetection {
 
 		gsap.set(animatedElements, animationFromProperties)
 
-		ScrollTrigger.batch(parent, {
+		const trigger = ScrollTrigger.create({
+			trigger: parent,
 			start: parent.dataset.inviewStart || this.start,
 			onEnter: () => {
 				gsap.to(animatedElements, {
@@ -164,6 +166,8 @@ export default class InviewDetection {
 			},
 		})
 
+		this.triggers.push(trigger)
+
 		/* Debug mode */
 		if (parent.hasAttribute('data-inview-debug')) {
 			this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index)
@@ -184,5 +188,29 @@ export default class InviewDetection {
 			stagger: this.stagger,
 		})
 		console.groupEnd()
+	}
+
+	refresh() {
+		ScrollTrigger.refresh();
+	}
+
+	stop() {
+		// Kill ScrollTrigger instances created in this script
+		this.triggers.forEach((st) => st.kill())
+
+		// Kill all gsap animations of the elements
+		gsap.utils.toArray(this.elements).forEach((element) => {
+			gsap.killTweensOf(element);
+		})
+	}
+
+	restart() {
+		// Kill all gsap animations of the elements
+		gsap.utils.toArray(this.elements).forEach((element) => {
+			gsap.killTweensOf(element);
+		});
+
+		// Reinitialize everything
+		this.init();
 	}
 }

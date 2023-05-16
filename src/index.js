@@ -22,27 +22,27 @@ export default class InviewDetection {
 		/**
 		 * Loop through each parent
 		 */
-		gsap.utils.toArray(this.elements).forEach((oParent, iIndex) => {
+		gsap.utils.toArray(this.elements).forEach((parent, iIndex) => {
 			/**
 			 * Determine what elements are to be animated
 			 */
 
 			/* Create empty array of animated elements */
-			var aAnimatedElements = []
+			var elements = []
 
 			/* Check elements  */
-			if (!oParent.hasAttribute('data-inview-scope')) {
+			if (!parent.hasAttribute('data-inview-scope')) {
 				/* Add parent element if scope isn't set */
-				aAnimatedElements.push({
-					el: oParent,
-					order: oParent.dataset.inviewOrder,
+				elements.push({
+					el: parent,
+					order: parent.dataset.inviewOrder,
 				})
 			} else {
 				/* Add elements that are defined in parent scope via `data-inview-scope` attribute */
-				if (oParent.dataset.inviewScope) {
-					oParent.querySelectorAll(':scope ' + oParent.dataset.inviewScope).forEach((element) => {
+				if (parent.dataset.inviewScope) {
+					parent.querySelectorAll(':scope ' + parent.dataset.inviewScope).forEach((element) => {
 						const order = parseFloat(element.dataset.inviewOrder)
-						aAnimatedElements.push({
+						elements.push({
 							el: element,
 							order: order,
 						})
@@ -50,10 +50,10 @@ export default class InviewDetection {
 				}
 
 				/* Add attributed elements that are children with `data-inview-child` attribute */
-				if (oParent.querySelectorAll(':scope [data-inview-child]')) {
-					oParent.querySelectorAll(':scope [data-inview-child]').forEach((element) => {
+				if (parent.querySelectorAll(':scope [data-inview-child]')) {
+					parent.querySelectorAll(':scope [data-inview-child]').forEach((element) => {
 						const order = parseFloat(element.dataset.inviewOrder)
-						aAnimatedElements.push({
+						elements.push({
 							el: element,
 							order: order,
 						})
@@ -61,19 +61,19 @@ export default class InviewDetection {
 				}
 
 				/* Add SplitText elements that are defined with `data-inview-split` attribute */
-				if (oParent.querySelectorAll(':scope *:where([data-inview-split])')) {
-					var aElementsToSplit = []
+				if (parent.querySelectorAll(':scope *:where([data-inview-split])')) {
+					var elementsToSplit = []
 
-					const aSplitElements = oParent.querySelectorAll(':scope *:where([data-inview-split])')
+					const aSplitElements = parent.querySelectorAll(':scope *:where([data-inview-split])')
 					const aSplitElementsParent = Array.from(aSplitElements).filter(
-						(oElement) => oElement.dataset.inviewSplit
+						(element) => element.dataset.inviewSplit
 					)
-					const aSplitElementsSelf = Array.from(aSplitElements).filter(
-						(oElement) => !oElement.dataset.inviewSplit
+					const elementSelfToSplit = Array.from(aSplitElements).filter(
+						(element) => !element.dataset.inviewSplit
 					)
 
-					if (aSplitElementsSelf) {
-						aElementsToSplit = Array.prototype.concat.apply(aElementsToSplit, aSplitElementsSelf)
+					if (elementSelfToSplit) {
+						elementsToSplit = Array.prototype.concat.apply(elementsToSplit, elementSelfToSplit)
 					}
 
 					if (aSplitElementsParent) {
@@ -81,27 +81,27 @@ export default class InviewDetection {
 							const oSplitChildren = oSplitParent.querySelectorAll(
 								':scope ' + oSplitParent.dataset.inviewSplit
 							)
-							aElementsToSplit = Array.prototype.concat.apply(aElementsToSplit, oSplitChildren)
+							elementsToSplit = Array.prototype.concat.apply(elementsToSplit, oSplitChildren)
 						})
 					}
 
-					aElementsToSplit.forEach((oSplitElement) => {
-						var iOrder = fnFindClosestParentOrderAttr(oSplitElement)
+					elementsToSplit.forEach((oSplitElement) => {
+						var order = find_closest_parent_order_attr(oSplitElement)
 						const oSplitChildren = new SplitText(oSplitElement, {
 							type: 'lines',
 							linesClass: 'lineChild',
 						})
 
 						oSplitChildren.lines.forEach((oLine) => {
-							if (iOrder) {
-								iOrder += 0.01
-								oLine.dataset.inviewOrder = iOrder.toFixed(2)
-								aAnimatedElements.push({
+							if (order) {
+								order += 0.01
+								oLine.dataset.inviewOrder = order.toFixed(2)
+								elements.push({
 									el: oLine,
-									order: iOrder,
+									order: order,
 								})
 							} else {
-								aAnimatedElements.push({
+								elements.push({
 									el: oLine,
 									order: false,
 								})
@@ -112,26 +112,26 @@ export default class InviewDetection {
 			}
 
 			/* Function to find the closest parent containing the order attribute */
-			function fnFindClosestParentOrderAttr(oElement) {
-				let oParent = oElement.parentElement
-				let iAncestorsIndexed = 0
-				let iAncestorsLimit = 5
-				while (oParent && iAncestorsIndexed <= iAncestorsLimit) {
-					if (oParent.hasAttribute('data-inview-order')) {
-						return parseFloat(oParent.getAttribute('data-inview-order'))
+			function find_closest_parent_order_attr(element) {
+				let parent = element.parentElement
+				let ancestorsIndexed = 0
+				let ancestorsLimit = 5
+				while (parent && ancestorsIndexed <= ancestorsLimit) {
+					if (parent.hasAttribute('data-inview-order')) {
+						return parseFloat(parent.getAttribute('data-inview-order'))
 					}
-					oParent = oParent.parentElement
-					iAncestorsIndexed++
+					parent = parent.parentElement
+					ancestorsIndexed++
 				}
-				if (oElement.hasAttribute('data-inview-order')) {
-					const value = oElement.getAttribute('data-inview-order')
+				if (element.hasAttribute('data-inview-order')) {
+					const value = element.getAttribute('data-inview-order')
 					return Number.isInteger(+value) ? +value : false
 				}
 				return false
 			}
 
 			/* Reorder elements based on their order value */
-			aAnimatedElements.sort((a, b) => {
+			elements.sort((a, b) => {
 				if (isNaN(a['order']) || a['order'] === false || a['order'] === null || a['order'] === undefined) {
 					return 1 // preserve original order of NaN/false/null values
 				} else if (
@@ -146,57 +146,57 @@ export default class InviewDetection {
 				}
 			})
 
-			aAnimatedElements = aAnimatedElements.map((oElement) => oElement.el)
+			elements = elements.map((element) => element.el)
 
 			/**
 			 * Initial animate FROM properties
 			 */
-			var aAnimateFromProperties = this.animationFrom
+			var animateFromProperties = this.animationFrom
 
-			if (oParent.dataset.inviewFrom) {
-				aAnimateFromProperties = JSON.parse(oParent.dataset.inviewFrom)
+			if (parent.dataset.inviewFrom) {
+				animateFromProperties = JSON.parse(parent.dataset.inviewFrom)
 			}
-			gsap.set(aAnimatedElements, aAnimateFromProperties)
+			gsap.set(elements, animateFromProperties)
 
 			/**
 			 * Animate TO properties (based on scroll position)
 			 */
-			var aAnimateToProperties = this.animationTo
+			var animateToProperties = this.animationTo
 
-			if (oParent.dataset.inviewTo) {
-				aAnimateToProperties = JSON.parse(oParent.dataset.inviewTo)
+			if (parent.dataset.inviewTo) {
+				animateToProperties = JSON.parse(parent.dataset.inviewTo)
 			}
 
-			ScrollTrigger.batch(oParent, {
-				start: oParent.dataset.inviewStart || this.start,
+			ScrollTrigger.batch(parent, {
+				start: parent.dataset.inviewStart || this.start,
 				onEnter: () => {
-					gsap.to(aAnimatedElements, {
-						...aAnimateToProperties,
-						duration: oParent.dataset.inviewDuration || this.duration,
-						delay: oParent.dataset.inviewDelay || this.delay,
-						ease: oParent.dataset.inviewEase || this.ease,
+					gsap.to(elements, {
+						...animateToProperties,
+						duration: parent.dataset.inviewDuration || this.duration,
+						delay: parent.dataset.inviewDelay || this.delay,
+						ease: parent.dataset.inviewEase || this.ease,
 						stagger: {
-							each: oParent.dataset.inviewStagger || this.stagger,
+							each: parent.dataset.inviewStagger || this.stagger,
 							from: 'start',
 						},
 					})
-					oParent.classList.add('has-viewed')
+					parent.classList.add('has-viewed')
 				},
-				markers: oParent.hasAttribute('data-inview-debug') ? true : false,
+				markers: parent.hasAttribute('data-inview-debug') ? true : false,
 				toggleClass: {
-					targets: oParent,
+					targets: parent,
 					className: 'is-inview',
 				},
 			})
 
 			/* Debug mode */
-			if (oParent.hasAttribute('data-inview-debug')) {
+			if (parent.hasAttribute('data-inview-debug')) {
 				console.group(`InviewDetection() debug instance (${iIndex + 1})`)
 				console.log({
-					parent: oParent,
-					elements: aAnimatedElements,
-					animationFrom: aAnimateFromProperties,
-					animationTo: aAnimateToProperties,
+					parent: parent,
+					elements: elements,
+					animationFrom: animateFromProperties,
+					animationTo: animateToProperties,
 					duration: this.duration,
 					delay: this.delay,
 					start: this.start,

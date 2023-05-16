@@ -23,199 +23,320 @@
       if (options === void 0) {
         options = {};
       }
-      this.elements = options.elements || '[data-inview]';
-      this.duration = options.duration || 1;
-      this.delay = options.delay || 1;
-      this.start = options.start || 'top 90%';
-      this.ease = options.ease || 'power4';
-      this.stagger = options.stagger || 0.155;
-      this.animationFrom = options.animationFrom || {
-        opacity: 0,
-        'will-change': 'transform',
-        y: 20
+      // Define default options
+      this.defaultOptions = {
+        elements: '[data-inview]',
+        duration: 1,
+        delay: 0.4,
+        start: 'top 90%',
+        ease: 'power4',
+        stagger: 0.095,
+        animationFrom: {
+          opacity: 0,
+          'will-change': 'transform',
+          y: 20
+        },
+        animationTo: {
+          opacity: 1,
+          y: 0
+        }
       };
-      this.animationTo = options.animationTo || {
-        opacity: 1,
-        y: 0
-      };
+
+      // Merge default options with provided options
+      this.options = _extends({}, this.defaultOptions, options);
+
+      // Store ScrollTrigger instances
+      this.triggers = [];
+
+      // Initialize the class
       this.init();
     }
+
+    // Function to get a specific option
     var _proto = InviewDetection.prototype;
+    _proto.getOption = function getOption(optionName) {
+      return this.options[optionName];
+    }
+
+    // Initialization function
+    ;
     _proto.init = function init() {
       var _this = this;
-      /**
-       * Loop through each parent
-       */
-      gsap.utils.toArray(this.elements).forEach(function (oParent, iIndex) {
-        /**
-         * Determine what elements are to be animated
-         */
+      try {
+        // Convert elements to an array and loop through each
+        gsap.utils.toArray(this.getOption('elements')).forEach(function (parent, index) {
+          // Define array to hold animated elements
+          var animatedElements = [];
 
-        /* Create empty array of animated elements */
-        var aAnimatedElements = [];
-
-        /* Check elements  */
-        if (!oParent.hasAttribute('data-inview-scope')) {
-          /* Add parent element if scope isn't set */
-          aAnimatedElements.push({
-            el: oParent,
-            order: oParent.dataset.inviewOrder
-          });
-        } else {
-          /* Add elements that are defined in parent scope via `data-inview-scope` attribute */
-          if (oParent.dataset.inviewScope) {
-            oParent.querySelectorAll(':scope ' + oParent.dataset.inviewScope).forEach(function (element) {
-              var order = parseFloat(element.dataset.inviewOrder);
-              aAnimatedElements.push({
-                el: element,
-                order: order
-              });
+          // If the parent doesn't have 'data-inview-scope' attribute,
+          // add it to the animated elements
+          // Otherwise, add scoped, child, and split elements
+          if (!parent.hasAttribute('data-inview-scope')) {
+            animatedElements.push({
+              el: parent,
+              order: parent.dataset.inviewOrder
             });
-          }
-
-          /* Add attributed elements that are children with `data-inview-child` attribute */
-          if (oParent.querySelectorAll(':scope [data-inview-child]')) {
-            oParent.querySelectorAll(':scope [data-inview-child]').forEach(function (element) {
-              var order = parseFloat(element.dataset.inviewOrder);
-              aAnimatedElements.push({
-                el: element,
-                order: order
-              });
-            });
-          }
-
-          /* Add SplitText elements that are defined with `data-inview-split` attribute */
-          if (oParent.querySelectorAll(':scope *:where([data-inview-split])')) {
-            var aElementsToSplit = [];
-            var aSplitElements = oParent.querySelectorAll(':scope *:where([data-inview-split])');
-            var aSplitElementsParent = Array.from(aSplitElements).filter(function (oElement) {
-              return oElement.dataset.inviewSplit;
-            });
-            var aSplitElementsSelf = Array.from(aSplitElements).filter(function (oElement) {
-              return !oElement.dataset.inviewSplit;
-            });
-            if (aSplitElementsSelf) {
-              aElementsToSplit = Array.prototype.concat.apply(aElementsToSplit, aSplitElementsSelf);
-            }
-            if (aSplitElementsParent) {
-              aSplitElementsParent.forEach(function (oSplitParent) {
-                var oSplitChildren = oSplitParent.querySelectorAll(':scope ' + oSplitParent.dataset.inviewSplit);
-                aElementsToSplit = Array.prototype.concat.apply(aElementsToSplit, oSplitChildren);
-              });
-            }
-            aElementsToSplit.forEach(function (oSplitElement) {
-              var iOrder = fnFindClosestParentOrderAttr(oSplitElement);
-              var oSplitChildren = new SplitText(oSplitElement, {
-                type: 'lines',
-                linesClass: 'lineChild'
-              });
-              oSplitChildren.lines.forEach(function (oLine) {
-                if (iOrder) {
-                  iOrder += 0.01;
-                  oLine.dataset.inviewOrder = iOrder.toFixed(2);
-                  aAnimatedElements.push({
-                    el: oLine,
-                    order: iOrder
-                  });
-                } else {
-                  aAnimatedElements.push({
-                    el: oLine,
-                    order: false
-                  });
-                }
-              });
-            });
-          }
-        }
-
-        /* Function to find the closest parent containing the order attribute */
-        function fnFindClosestParentOrderAttr(oElement) {
-          var oParent = oElement.parentElement;
-          var iAncestorsIndexed = 0;
-          var iAncestorsLimit = 5;
-          while (oParent && iAncestorsIndexed <= iAncestorsLimit) {
-            if (oParent.hasAttribute('data-inview-order')) {
-              return parseFloat(oParent.getAttribute('data-inview-order'));
-            }
-            oParent = oParent.parentElement;
-            iAncestorsIndexed++;
-          }
-          if (oElement.hasAttribute('data-inview-order')) {
-            var value = oElement.getAttribute('data-inview-order');
-            return Number.isInteger(+value) ? +value : false;
-          }
-          return false;
-        }
-
-        /* Reorder elements based on their order value */
-        aAnimatedElements.sort(function (a, b) {
-          if (isNaN(a['order']) || a['order'] === false || a['order'] === null || a['order'] === undefined) {
-            return 1; // preserve original order of NaN/false/null values
-          } else if (isNaN(b['order']) || b['order'] === false || b['order'] === null || b['order'] === undefined) {
-            return -1; // preserve original order of NaN/false/null values
           } else {
-            return a['order'] - b['order']; // sort by order value
+            _this.addScopedElements(parent, animatedElements);
+            _this.addChildElements(parent, animatedElements);
+            _this.addSplitElements(parent, animatedElements);
           }
+
+          // Order the animated elements based on their 'order' property
+          _this.orderAnimatedElements(animatedElements);
+
+          // Animate the elements
+          _this.animateElements(parent, animatedElements, index);
         });
+      } catch (error) {
+        // Catch and log any errors
+        console.error('Error initialising InviewDetection:', error);
+      }
+    }
 
-        aAnimatedElements = aAnimatedElements.map(function (oElement) {
-          return oElement.el;
-        });
-
-        /**
-         * Initial animate FROM properties
-         */
-        var aAnimateFromProperties = _this.animationFrom;
-        if (oParent.dataset.inviewFrom) {
-          aAnimateFromProperties = JSON.parse(oParent.dataset.inviewFrom);
-        }
-        gsap.set(aAnimatedElements, aAnimateFromProperties);
-
-        /**
-         * Animate TO properties (based on scroll position)
-         */
-        var aAnimateToProperties = _this.animationTo;
-        if (oParent.dataset.inviewTo) {
-          aAnimateToProperties = JSON.parse(oParent.dataset.inviewTo);
-        }
-        ScrollTrigger.batch(oParent, {
-          start: oParent.dataset.inviewStart || _this.start,
-          onEnter: function onEnter() {
-            gsap.to(aAnimatedElements, _extends({}, aAnimateToProperties, {
-              duration: oParent.dataset.inviewDuration || _this.duration,
-              delay: oParent.dataset.inviewDelay || _this.delay,
-              ease: oParent.dataset.inviewEase || _this.ease,
-              stagger: {
-                each: oParent.dataset.inviewStagger || _this.stagger,
-                from: 'start'
-              }
-            }));
-            oParent.classList.add('has-viewed');
-          },
-          markers: oParent.hasAttribute('data-inview-debug') ? true : false,
-          toggleClass: {
-            targets: oParent,
-            className: 'is-inview'
-          }
-        });
-
-        /* Debug mode */
-        if (oParent.hasAttribute('data-inview-debug')) {
-          console.group("InviewDetection() debug instance (" + (iIndex + 1) + ")");
-          console.log({
-            parent: oParent,
-            elements: aAnimatedElements,
-            animationFrom: aAnimateFromProperties,
-            animationTo: aAnimateToProperties,
-            duration: _this.duration,
-            delay: _this.delay,
-            start: _this.start,
-            ease: _this.ease,
-            stagger: _this.stagger
+    // Function to add scoped elements to the animatedElements array
+    ;
+    _proto.addScopedElements = function addScopedElements(parent, animatedElements) {
+      try {
+        // If the parent has 'data-inview-scope' attribute,
+        // add all elements defined in this attribute to the animatedElements array
+        if (parent.dataset.inviewScope) {
+          parent.querySelectorAll(':scope ' + parent.dataset.inviewScope).forEach(function (element) {
+            var order = parseFloat(element.dataset.inviewOrder);
+            animatedElements.push({
+              el: element,
+              order: order
+            });
           });
-          console.groupEnd();
+        }
+      } catch (error) {
+        // Catch and log any errors
+        console.error('Error adding scoped elements:', error);
+      }
+    }
+
+    // Function to add child elements to the animatedElements array
+    ;
+    _proto.addChildElements = function addChildElements(parent, animatedElements) {
+      try {
+        // Add all elements with 'data-inview-child' attribute to the animatedElements array
+        parent.querySelectorAll(':scope [data-inview-child]').forEach(function (element) {
+          var order = parseFloat(element.dataset.inviewOrder);
+          animatedElements.push({
+            el: element,
+            order: order
+          });
+        });
+      } catch (error) {
+        // Catch and log any errors
+        console.error('Error adding child elements:', error);
+      }
+    }
+
+    // Function to find the closest parent with 'data-inview-order' attribute
+    ;
+    _proto.findClosestParentOrderAttr = function findClosestParentOrderAttr(element) {
+      var parent = element.parentElement;
+      var ancestorsIndexed = 0;
+      var ancestorsLimit = 5;
+      // Iterate through parent elements up to ancestorsLimit
+      while (parent && ancestorsIndexed <= ancestorsLimit) {
+        if (parent.hasAttribute('data-inview-order')) {
+          return parseFloat(parent.getAttribute('data-inview-order'));
+        }
+        parent = parent.parentElement;
+        ancestorsIndexed++;
+      }
+      if (element.hasAttribute('data-inview-order')) {
+        var value = element.getAttribute('data-inview-order');
+        return isNaN(+value) ? false : +value;
+      }
+      return false;
+    }
+
+    // Function to add split elements to the animatedElements array
+    ;
+    _proto.addSplitElements = function addSplitElements(parent, animatedElements) {
+      var _this2 = this;
+      var splitElements = parent.querySelectorAll(':scope *:where([data-inview-split])');
+      var splitElementsParent = Array.from(splitElements).filter(function (element) {
+        return element.dataset.inviewSplit;
+      });
+      var selfToSplit = Array.from(splitElements).filter(function (element) {
+        return !element.dataset.inviewSplit;
+      });
+      var elementsToSplit = [].concat(selfToSplit, this.getSplitChildren(splitElementsParent));
+
+      // For each element to split, add it to the animatedElements array
+      elementsToSplit.forEach(function (splitElement) {
+        return _this2.addSplitElement(splitElement, animatedElements);
+      });
+    }
+
+    // Function to get split children
+    ;
+    _proto.getSplitChildren = function getSplitChildren(splitElementsParent) {
+      var splitChildren = [];
+
+      // For each split parent, add its children to splitChildren array
+      splitElementsParent.forEach(function (splitParent) {
+        splitChildren = [].concat(splitChildren, splitParent.querySelectorAll(':scope ' + splitParent.dataset.inviewSplit));
+      });
+      return splitChildren;
+    }
+
+    // Function to add a split element to the animatedElements array
+    ;
+    _proto.addSplitElement = function addSplitElement(splitElement, animatedElements) {
+      try {
+        // Find the closest parent with 'data-inview-order' attribute
+        var order = this.findClosestParentOrderAttr(splitElement);
+
+        // Split the text of the splitElement into lines
+        var splitChildren = new SplitText(splitElement, {
+          type: 'lines',
+          linesClass: 'lineChild'
+        });
+
+        // For each line, add it to the animatedElements array
+        splitChildren.lines.forEach(function (line) {
+          if (order) {
+            order += 0.01;
+            line.dataset.inviewOrder = order.toFixed(2);
+            animatedElements.push({
+              el: line,
+              order: order
+            });
+          } else {
+            animatedElements.push({
+              el: line,
+              order: false
+            });
+          }
+        });
+      } catch (error) {
+        // Catch and log any errors
+        console.error('Error splitting element:', error);
+      }
+    }
+
+    // Function to order animated elements based on their 'order' property
+    ;
+    _proto.orderAnimatedElements = function orderAnimatedElements(animatedElements) {
+      animatedElements.sort(function (a, b) {
+        var _a$order, _b$order;
+        return ((_a$order = a['order']) != null ? _a$order : 1) - ((_b$order = b['order']) != null ? _b$order : -1);
+      });
+
+      // Replace each animatedElement object with its corresponding element
+      for (var i = 0; i < animatedElements.length; i++) {
+        animatedElements[i] = animatedElements[i].el;
+      }
+    }
+
+    // Function to animate the elements
+    ;
+    _proto.animateElements = function animateElements(parent, animatedElements, index) {
+      var _this3 = this;
+      var animationFromProperties = this.getOption('animationFrom');
+      var animationToProperties = this.getOption('animationTo');
+      try {
+        // Check if the parent has custom animation properties defined in 'data-inviewFrom' and 'data-inviewTo'
+        if (parent.dataset.inviewFrom) {
+          animationFromProperties = JSON.parse(parent.dataset.inviewFrom);
+        }
+        if (parent.dataset.inviewTo) {
+          animationToProperties = JSON.parse(parent.dataset.inviewTo);
+        }
+      } catch (error) {
+        // Catch and log any errors
+        console.error('Error parsing JSON', error);
+      }
+
+      // Set initial animation properties for the animated elements
+      gsap.set(animatedElements, animationFromProperties);
+
+      // Create a ScrollTrigger instance for the parent element
+      var trigger = ScrollTrigger.create({
+        trigger: parent,
+        start: parent.dataset.inviewStart || this.getOption('start'),
+        onEnter: function onEnter() {
+          // Animate the elements when they enter the viewport
+          gsap.to(animatedElements, _extends({}, animationToProperties, {
+            duration: parent.dataset.inviewDuration || _this3.getOption('duration'),
+            delay: parent.dataset.inviewDelay || _this3.getOption('delay'),
+            ease: parent.dataset.inviewEase || _this3.getOption('ease'),
+            stagger: {
+              each: parent.dataset.inviewStagger || _this3.getOption('stagger'),
+              from: 'start'
+            }
+          }));
+          parent.classList.add('has-viewed');
+        },
+        markers: parent.hasAttribute('data-inview-debug') ? true : false,
+        toggleClass: {
+          targets: parent,
+          className: 'is-inview'
         }
       });
+
+      // Store the ScrollTrigger instance
+      this.triggers.push(trigger);
+
+      /* Debug mode */
+      if (parent.hasAttribute('data-inview-debug')) {
+        this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index);
+      }
+    }
+
+    // Function for debug mode logging
+    ;
+    _proto.debugMode = function debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index) {
+      console.group("InviewDetection() debug instance (" + (index + 1) + ")");
+      console.log({
+        parent: parent,
+        elements: animatedElements,
+        animationFrom: animationFromProperties,
+        animationTo: animationToProperties,
+        duration: this.getOption('duration'),
+        delay: this.getOption('delay'),
+        start: this.getOption('start'),
+        ease: this.getOption('ease'),
+        stagger: this.getOption('stagger')
+      });
+      console.groupEnd();
+    }
+
+    // Function to refresh ScrollTrigger instances
+    ;
+    _proto.refresh = function refresh() {
+      ScrollTrigger.refresh();
+    }
+
+    // Function to stop the animations and ScrollTrigger instances
+    ;
+    _proto.stop = function stop() {
+      // Kill ScrollTrigger instances created in this script
+      this.triggers.forEach(function (st) {
+        return st.kill();
+      });
+
+      // Kill all GSAP animations of the elements
+      gsap.utils.toArray(this.getOption('elements')).forEach(function (element) {
+        gsap.killTweensOf(element);
+      });
+    }
+
+    // Function to restart the animations and reinitialise everything
+    ;
+    _proto.restart = function restart() {
+      // Kill all GSAP animations of the elements
+      gsap.utils.toArray(this.getOption('elements')).forEach(function (element) {
+        gsap.killTweensOf(element);
+      });
+
+      // Reinitialise everything
+      this.init();
     };
     return InviewDetection;
   }();

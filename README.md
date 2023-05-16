@@ -122,6 +122,32 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | `data-inview-from` | `json` | Apply custom `gsap.from()` properties for every element (by default sets opacity to 0 and y to 20px). Example: `{"opacity": "0", "y": "20", "rotation": "0"}` |
 | `data-inview-to` | `json` | Apply custom `gsap.to()` properties for every element (by default sets opacity to 1 and y to 0). Example: `{"opacity": "1", "y": "0", "rotation": "10"}` |
 
+### Methods
+
+#### Refresh
+
+Update ScrollTrigger calculations.
+
+```js
+inview.refresh();
+```
+
+#### Stop
+
+Stop all animations so anything not yet visible does not load in.
+
+```js
+inview.stop();
+```
+
+#### Restart
+
+Stop and restart all animations.
+
+```js
+inview.restart();
+```
+
 ## Examples of use
 
 - [Code Resolution](https://coderesolution.com/): Digital agency partner.

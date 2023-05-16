@@ -113,9 +113,9 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | Name | Type | Description |
 | :--- | :---: | :--- |
 | `data-inview-debug` | | Set GSAP markers and output helpful console information. |
-| `data-inview-stagger` | `number` | Delay between each element in sequence. Defaults to `.155` |
 | `data-inview-duration` | `number` | Duration of each element transition. Defaults to `1` |
-| `data-inview-delay` | `number` | Delay before entire sequence begins. Defaults to `1` |
+| `data-inview-delay` | `number` | Delay before entire sequence begins. Defaults to `.4` |
+| `data-inview-stagger` | `number` | Delay between each element in sequence. Defaults to `0.095` |
 | `data-inview-ease` | `string` | GSAP easing. Defaults to `power4` |
 | `data-inview-order` | `number` | Apply an index to scoped elements, either `[data-inview-child]` or `[data-inview-split]` or elements specified in the respective parent's `[data-inview-scope]`. This will adjust the order of the element within the animation sequence. Negative numbers appear first, then positive numbers |
 | `data-inview-start` | `string` | When animation begins. Defaults to `top 90%` |

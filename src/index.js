@@ -1,5 +1,6 @@
 export default class InviewDetection {
 	constructor(options = {}) {
+		// Define default options
 		this.defaultOptions = {
 			elements: '[data-inview]',
 			duration: 1,
@@ -17,52 +18,90 @@ export default class InviewDetection {
 				y: 0,
 			},
 		}
+
+		// Merge default options with provided options
 		this.options = { ...this.defaultOptions, ...options }
+
+		// Store ScrollTrigger instances
 		this.triggers = []
+
+		// Initialize the class
 		this.init()
 	}
 
+	// Function to get a specific option
 	getOption(optionName) {
 		return this.options[optionName]
 	}
 
+	// Initialization function
 	init() {
-		gsap.utils.toArray(this.getOption('elements')).forEach((parent, index) => {
-			let animatedElements = []
+		try {
+			// Convert elements to an array and loop through each
+			gsap.utils.toArray(this.getOption('elements')).forEach((parent, index) => {
+				// Define array to hold animated elements
+				let animatedElements = []
 
-			if (!parent.hasAttribute('data-inview-scope')) {
-				animatedElements.push({ el: parent, order: parent.dataset.inviewOrder })
-			} else {
-				this.addScopedElements(parent, animatedElements)
-				this.addChildElements(parent, animatedElements)
-				this.addSplitElements(parent, animatedElements)
-			}
+				// If the parent doesn't have 'data-inview-scope' attribute,
+				// add it to the animated elements
+				// Otherwise, add scoped, child, and split elements
+				if (!parent.hasAttribute('data-inview-scope')) {
+					animatedElements.push({ el: parent, order: parent.dataset.inviewOrder })
+				} else {
+					this.addScopedElements(parent, animatedElements)
+					this.addChildElements(parent, animatedElements)
+					this.addSplitElements(parent, animatedElements)
+				}
 
-			this.orderAnimatedElements(animatedElements)
-			this.animateElements(parent, animatedElements, index)
-		})
-	}
+				// Order the animated elements based on their 'order' property
+				this.orderAnimatedElements(animatedElements)
 
-	addScopedElements(parent, animatedElements) {
-		if (parent.dataset.inviewScope) {
-			parent.querySelectorAll(':scope ' + parent.dataset.inviewScope).forEach((element) => {
-				const order = parseFloat(element.dataset.inviewOrder)
-				animatedElements.push({ el: element, order: order })
+				// Animate the elements
+				this.animateElements(parent, animatedElements, index)
 			})
+		} catch (error) {
+			// Catch and log any errors
+			console.error('Error initialising InviewDetection:', error)
 		}
 	}
 
-	addChildElements(parent, animatedElements) {
-		parent.querySelectorAll(':scope [data-inview-child]').forEach((element) => {
-			const order = parseFloat(element.dataset.inviewOrder)
-			animatedElements.push({ el: element, order: order })
-		})
+	// Function to add scoped elements to the animatedElements array
+	addScopedElements(parent, animatedElements) {
+		try {
+			// If the parent has 'data-inview-scope' attribute,
+			// add all elements defined in this attribute to the animatedElements array
+			if (parent.dataset.inviewScope) {
+				parent.querySelectorAll(':scope ' + parent.dataset.inviewScope).forEach((element) => {
+					const order = parseFloat(element.dataset.inviewOrder)
+					animatedElements.push({ el: element, order: order })
+				})
+			}
+		} catch (error) {
+			// Catch and log any errors
+			console.error('Error adding scoped elements:', error)
+		}
 	}
 
+	// Function to add child elements to the animatedElements array
+	addChildElements(parent, animatedElements) {
+		try {
+			// Add all elements with 'data-inview-child' attribute to the animatedElements array
+			parent.querySelectorAll(':scope [data-inview-child]').forEach((element) => {
+				const order = parseFloat(element.dataset.inviewOrder)
+				animatedElements.push({ el: element, order: order })
+			})
+		} catch (error) {
+			// Catch and log any errors
+			console.error('Error adding child elements:', error)
+		}
+	}
+
+	// Function to find the closest parent with 'data-inview-order' attribute
 	findClosestParentOrderAttr(element) {
 		let parent = element.parentElement
 		let ancestorsIndexed = 0
 		let ancestorsLimit = 5
+		// Iterate through parent elements up to ancestorsLimit
 		while (parent && ancestorsIndexed <= ancestorsLimit) {
 			if (parent.hasAttribute('data-inview-order')) {
 				return parseFloat(parent.getAttribute('data-inview-order'))
@@ -77,6 +116,7 @@ export default class InviewDetection {
 		return false
 	}
 
+	// Function to add split elements to the animatedElements array
 	addSplitElements(parent, animatedElements) {
 		const splitElements = parent.querySelectorAll(':scope *:where([data-inview-split])')
 		const splitElementsParent = Array.from(splitElements).filter((element) => element.dataset.inviewSplit)
@@ -84,12 +124,15 @@ export default class InviewDetection {
 
 		let elementsToSplit = [...selfToSplit, ...this.getSplitChildren(splitElementsParent)]
 
+		// For each element to split, add it to the animatedElements array
 		elementsToSplit.forEach((splitElement) => this.addSplitElement(splitElement, animatedElements))
 	}
 
+	// Function to get split children
 	getSplitChildren(splitElementsParent) {
 		let splitChildren = []
 
+		// For each split parent, add its children to splitChildren array
 		splitElementsParent.forEach((splitParent) => {
 			splitChildren = [
 				...splitChildren,
@@ -100,45 +143,59 @@ export default class InviewDetection {
 		return splitChildren
 	}
 
+	// Function to add a split element to the animatedElements array
 	addSplitElement(splitElement, animatedElements) {
-		let order = this.findClosestParentOrderAttr(splitElement)
-		const splitChildren = new SplitText(splitElement, {
-			type: 'lines',
-			linesClass: 'lineChild',
-		})
+		try {
+			// Find the closest parent with 'data-inview-order' attribute
+			let order = this.findClosestParentOrderAttr(splitElement)
 
-		splitChildren.lines.forEach((line) => {
-			if (order) {
-				order += 0.01
-				line.dataset.inviewOrder = order.toFixed(2)
-				animatedElements.push({
-					el: line,
-					order: order,
-				})
-			} else {
-				animatedElements.push({
-					el: line,
-					order: false,
-				})
-			}
-		})
+			// Split the text of the splitElement into lines
+			const splitChildren = new SplitText(splitElement, {
+				type: 'lines',
+				linesClass: 'lineChild',
+			})
+
+			// For each line, add it to the animatedElements array
+			splitChildren.lines.forEach((line) => {
+				if (order) {
+					order += 0.01
+					line.dataset.inviewOrder = order.toFixed(2)
+					animatedElements.push({
+						el: line,
+						order: order,
+					})
+				} else {
+					animatedElements.push({
+						el: line,
+						order: false,
+					})
+				}
+			})
+		} catch (error) {
+			// Catch and log any errors
+			console.error('Error splitting element:', error)
+		}
 	}
 
+	// Function to order animated elements based on their 'order' property
 	orderAnimatedElements(animatedElements) {
 		animatedElements.sort((a, b) => {
 			return (a['order'] ?? 1) - (b['order'] ?? -1)
 		})
 
+		// Replace each animatedElement object with its corresponding element
 		for (let i = 0; i < animatedElements.length; i++) {
 			animatedElements[i] = animatedElements[i].el
 		}
 	}
 
+	// Function to animate the elements
 	animateElements(parent, animatedElements, index) {
 		let animationFromProperties = this.getOption('animationFrom')
 		let animationToProperties = this.getOption('animationTo')
 
 		try {
+			// Check if the parent has custom animation properties defined in 'data-inviewFrom' and 'data-inviewTo'
 			if (parent.dataset.inviewFrom) {
 				animationFromProperties = JSON.parse(parent.dataset.inviewFrom)
 			}
@@ -147,15 +204,19 @@ export default class InviewDetection {
 				animationToProperties = JSON.parse(parent.dataset.inviewTo)
 			}
 		} catch (error) {
+			// Catch and log any errors
 			console.error('Error parsing JSON', error)
 		}
 
+		// Set initial animation properties for the animated elements
 		gsap.set(animatedElements, animationFromProperties)
 
+		// Create a ScrollTrigger instance for the parent element
 		const trigger = ScrollTrigger.create({
 			trigger: parent,
 			start: parent.dataset.inviewStart || this.getOption('start'),
 			onEnter: () => {
+				// Animate the elements when they enter the viewport
 				gsap.to(animatedElements, {
 					...animationToProperties,
 					duration: parent.dataset.inviewDuration || this.getOption('duration'),
@@ -175,6 +236,7 @@ export default class InviewDetection {
 			},
 		})
 
+		// Store the ScrollTrigger instance
 		this.triggers.push(trigger)
 
 		/* Debug mode */
@@ -183,6 +245,7 @@ export default class InviewDetection {
 		}
 	}
 
+	// Function for debug mode logging
 	debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index) {
 		console.group(`InviewDetection() debug instance (${index + 1})`)
 		console.log({
@@ -199,27 +262,30 @@ export default class InviewDetection {
 		console.groupEnd()
 	}
 
+	// Function to refresh ScrollTrigger instances
 	refresh() {
 		ScrollTrigger.refresh()
 	}
 
+	// Function to stop the animations and ScrollTrigger instances
 	stop() {
 		// Kill ScrollTrigger instances created in this script
 		this.triggers.forEach((st) => st.kill())
 
-		// Kill all gsap animations of the elements
+		// Kill all GSAP animations of the elements
 		gsap.utils.toArray(this.getOption('elements')).forEach((element) => {
 			gsap.killTweensOf(element)
 		})
 	}
 
+	// Function to restart the animations and reinitialise everything
 	restart() {
-		// Kill all gsap animations of the elements
+		// Kill all GSAP animations of the elements
 		gsap.utils.toArray(this.getOption('elements')).forEach((element) => {
 			gsap.killTweensOf(element)
 		})
 
-		// Reinitialize everything
+		// Reinitialise everything
 		this.init()
 	}
 }

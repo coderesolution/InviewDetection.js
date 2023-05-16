@@ -2,10 +2,10 @@ export default class InviewDetection {
 	constructor(options = {}) {
 		this.elements = options.elements || '[data-inview]'
 		this.duration = options.duration || 1
-		this.delay = options.delay || .4
+		this.delay = options.delay || 0.4
 		this.start = options.start || 'top 90%'
 		this.ease = options.ease || 'power4'
-		this.stagger = options.stagger || .095
+		this.stagger = options.stagger || 0.095
 		this.animationFrom = options.animationFrom || {
 			opacity: 0,
 			'will-change': 'transform',
@@ -64,7 +64,7 @@ export default class InviewDetection {
 		}
 		if (element.hasAttribute('data-inview-order')) {
 			const value = element.getAttribute('data-inview-order')
-			return Number.isInteger(+value) ? +value : false
+			return isNaN(+value) ? false : +value
 		}
 		return false
 	}
@@ -74,12 +74,8 @@ export default class InviewDetection {
 			let elementsToSplit = []
 
 			const splitElements = parent.querySelectorAll(':scope *:where([data-inview-split])')
-			const splitElementsParent = Array.from(splitElements).filter(
-				(element) => element.dataset.inviewSplit
-			)
-			const selfToSplit = Array.from(splitElements).filter(
-				(element) => !element.dataset.inviewSplit
-			)
+			const splitElementsParent = Array.from(splitElements).filter((element) => element.dataset.inviewSplit)
+			const selfToSplit = Array.from(splitElements).filter((element) => !element.dataset.inviewSplit)
 
 			if (selfToSplit.length > 0) {
 				elementsToSplit = Array.prototype.concat.apply(elementsToSplit, selfToSplit)
@@ -87,9 +83,7 @@ export default class InviewDetection {
 
 			if (splitElementsParent.length > 0) {
 				splitElementsParent.forEach((splitParent) => {
-					const splitChildren = splitParent.querySelectorAll(
-						':scope ' + splitParent.dataset.inviewSplit
-					)
+					const splitChildren = splitParent.querySelectorAll(':scope ' + splitParent.dataset.inviewSplit)
 					elementsToSplit = Array.prototype.concat.apply(elementsToSplit, splitChildren)
 				})
 			}
@@ -172,19 +166,23 @@ export default class InviewDetection {
 
 		/* Debug mode */
 		if (parent.hasAttribute('data-inview-debug')) {
-			console.group(`InviewDetection() debug instance (${index + 1})`)
-			console.log({
-				parent: parent,
-				elements: animatedElements,
-				animationFrom: animationFromProperties,
-				animationTo: animationToProperties,
-				duration: this.duration,
-				delay: this.delay,
-				start: this.start,
-				ease: this.ease,
-				stagger: this.stagger,
-			})
-			console.groupEnd()
+			this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index)
 		}
+	}
+
+	debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index) {
+		console.group(`InviewDetection() debug instance (${index + 1})`)
+		console.log({
+			parent: parent,
+			elements: animatedElements,
+			animationFrom: animationFromProperties,
+			animationTo: animationToProperties,
+			duration: this.duration,
+			delay: this.delay,
+			start: this.start,
+			ease: this.ease,
+			stagger: this.stagger,
+		})
+		console.groupEnd()
 	}
 }

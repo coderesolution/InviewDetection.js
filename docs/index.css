@@ -8,7 +8,6 @@ body {
 
 .main {
 	background: red;
-	padding: 5vw;
 }
 
 section {
@@ -17,6 +16,6 @@ section {
 	justify-content: center;
 	min-height: 100vh;
 	text-align: center;
-	
+
 	&:first-of-type { background: blue; }
 }

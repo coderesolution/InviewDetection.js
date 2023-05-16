@@ -15,12 +15,14 @@
 			<p data-inview>Top</p>
 		</section>
 		<section>
-			<p data-inview>One</p>
+			<p data-inview data-inview-delay="3">One</p>
 		</section>
-		<section data-inview data-inview-scope data-inview-debug data-inview-from='{"x": "-100", "rotation": "20"}' data-inview-to='{"x": "0", "rotation": "0"}'>
-			<p data-inview-child>Two A<br>Two A2<br>Two A3<br>Two A4</p>
-			<p data-inview-child>Two B</p>
-			<p data-inview-child>Two C</p>
+		<section>
+			<div data-inview data-inview-scope data-inview-debug data-inview-from='{"x": "-100", "rotation": "20"}' data-inview-to='{"x": "0", "rotation": "0"}'>
+				<p data-inview-child data-inview-order="3">Two A<br>Two A2<br>Two A3<br>Two A4</p>
+				<p data-inview-child data-inview-order="2">Two B</p>
+				<p data-inview-child data-inview-order="1">Two C</p>
+			</div>
 		</section>
 		<section data-inview data-inview-scope>
 			<p data-inview-child>Three</p>

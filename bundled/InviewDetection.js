@@ -180,7 +180,14 @@
 
       // For each element to split, add it to the animatedElements array
       elementsToSplit.forEach(function (splitElement) {
-        return _this2.addSplitElement(splitElement, animatedElements);
+        // If splitElement is a NodeList, handle each Node individually
+        if (splitElement instanceof NodeList) {
+          splitElement.forEach(function (node) {
+            return _this2.addSplitElement(node, animatedElements);
+          });
+        } else {
+          _this2.addSplitElement(splitElement, animatedElements);
+        }
       });
     }
 
@@ -200,31 +207,37 @@
     ;
     _proto.addSplitElement = function addSplitElement(splitElement, animatedElements) {
       try {
-        // Find the closest parent with 'data-inview-order' attribute
-        var order = this.findClosestParentOrderAttr(splitElement);
+        // Check if splitElement is a DOM element
+        if (splitElement instanceof Element) {
+          // Find the closest parent with 'data-inview-order' attribute
+          var order = this.findClosestParentOrderAttr(splitElement);
 
-        // Split the text of the splitElement into lines
-        var splitChildren = new SplitText(splitElement, {
-          type: 'lines',
-          linesClass: 'lineChild'
-        });
+          // Split the text of the splitElement into lines
+          var splitChildren = new SplitText(splitElement, {
+            type: 'lines',
+            linesClass: 'lineChild'
+          });
 
-        // For each line, add it to the animatedElements array
-        splitChildren.lines.forEach(function (line) {
-          if (order) {
-            order += 0.01;
-            line.dataset.inviewOrder = order.toFixed(2);
-            animatedElements.push({
-              el: line,
-              order: order
-            });
-          } else {
-            animatedElements.push({
-              el: line,
-              order: false
-            });
-          }
-        });
+          // For each line, add it to the animatedElements array
+          splitChildren.lines.forEach(function (line) {
+            if (order) {
+              order += 0.01;
+              line.dataset.inviewOrder = order.toFixed(2);
+              animatedElements.push({
+                el: line,
+                order: order
+              });
+            } else {
+              animatedElements.push({
+                el: line,
+                order: false
+              });
+            }
+          });
+        } else {
+          // Log an error if splitElement is not a DOM element
+          console.error('splitElement is not a DOM element:', splitElement);
+        }
       } catch (error) {
         // Catch and log any errors
         console.error('Error splitting element:', error);

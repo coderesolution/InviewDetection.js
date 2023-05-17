@@ -125,7 +125,14 @@ export default class InviewDetection {
 		let elementsToSplit = [...selfToSplit, ...this.getSplitChildren(splitElementsParent)]
 
 		// For each element to split, add it to the animatedElements array
-		elementsToSplit.forEach((splitElement) => this.addSplitElement(splitElement, animatedElements))
+		elementsToSplit.forEach((splitElement) => {
+			// If splitElement is a NodeList, handle each Node individually
+			if (splitElement instanceof NodeList) {
+				splitElement.forEach((node) => this.addSplitElement(node, animatedElements))
+			} else {
+				this.addSplitElement(splitElement, animatedElements)
+			}
+		})
 	}
 
 	// Function to get split children
@@ -146,31 +153,37 @@ export default class InviewDetection {
 	// Function to add a split element to the animatedElements array
 	addSplitElement(splitElement, animatedElements) {
 		try {
-			// Find the closest parent with 'data-inview-order' attribute
-			let order = this.findClosestParentOrderAttr(splitElement)
+			// Check if splitElement is a DOM element
+			if (splitElement instanceof Element) {
+				// Find the closest parent with 'data-inview-order' attribute
+				let order = this.findClosestParentOrderAttr(splitElement)
 
-			// Split the text of the splitElement into lines
-			const splitChildren = new SplitText(splitElement, {
-				type: 'lines',
-				linesClass: 'lineChild',
-			})
+				// Split the text of the splitElement into lines
+				const splitChildren = new SplitText(splitElement, {
+					type: 'lines',
+					linesClass: 'lineChild',
+				})
 
-			// For each line, add it to the animatedElements array
-			splitChildren.lines.forEach((line) => {
-				if (order) {
-					order += 0.01
-					line.dataset.inviewOrder = order.toFixed(2)
-					animatedElements.push({
-						el: line,
-						order: order,
-					})
-				} else {
-					animatedElements.push({
-						el: line,
-						order: false,
-					})
-				}
-			})
+				// For each line, add it to the animatedElements array
+				splitChildren.lines.forEach((line) => {
+					if (order) {
+						order += 0.01
+						line.dataset.inviewOrder = order.toFixed(2)
+						animatedElements.push({
+							el: line,
+							order: order,
+						})
+					} else {
+						animatedElements.push({
+							el: line,
+							order: false,
+						})
+					}
+				})
+			} else {
+				// Log an error if splitElement is not a DOM element
+				console.error('splitElement is not a DOM element:', splitElement)
+			}
 		} catch (error) {
 			// Catch and log any errors
 			console.error('Error splitting element:', error)

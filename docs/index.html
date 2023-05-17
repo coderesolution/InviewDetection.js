@@ -9,6 +9,11 @@
 		<script src="./plugins/SplitText.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1/bundled/lenis.min.js"></script>
 		<script type="module" src="./main.js"></script>
+		<script>
+			function fnTest(sString) {
+				console.log( 'Custom function ran with data:', sString );
+			}
+		</script>
 	</head>
 	<body class="main">
 		<section>
@@ -18,7 +23,7 @@
 			<p data-inview data-inview-delay="3">One</p>
 		</section>
 		<section>
-			<div data-inview data-inview-scope data-inview-debug data-inview-from='{"x": "-100", "rotation": "20"}' data-inview-to='{"x": "0", "rotation": "0"}'>
+			<div data-inview data-inview-call="fnTest('data-passed')" data-inview-scope data-inview-debug data-inview-from='{"x": "-100", "rotation": "20"}' data-inview-to='{"x": "0", "rotation": "0"}'>
 				<p data-inview-child data-inview-order="2">Two A<br>Two A2<br>Two A3<br>Two A4</p>
 				<p data-inview-child data-inview-order="5">Two B</p>
 				<p data-inview-child data-inview-order="1">Two C</p>

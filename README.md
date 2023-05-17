@@ -121,6 +121,7 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | `data-inview-start` | `string` | When animation begins. Defaults to `top 90%` |
 | `data-inview-from` | `json` | Apply custom `gsap.from()` properties for every element (by default sets opacity to 0 and y to 20px). Example: `{"opacity": "0", "y": "20", "rotation": "0"}` |
 | `data-inview-to` | `json` | Apply custom `gsap.to()` properties for every element (by default sets opacity to 1 and y to 0). Example: `{"opacity": "1", "y": "0", "rotation": "10"}` |
+| `data-inview-call` | `string` | Run custom functions and pass data in, for example: `fnExample( 'pass-this-data')` |
 
 ### Methods
 

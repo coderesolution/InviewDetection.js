@@ -215,19 +215,52 @@ export default class InviewDetection {
 		const trigger = ScrollTrigger.create({
 			trigger: parent,
 			start: parent.dataset.inviewStart || this.getOption('start'),
-			onEnter: () => {
+			onEnter: async () => {
 				// Animate the elements when they enter the viewport
-				gsap.to(animatedElements, {
-					...animationToProperties,
-					duration: parent.dataset.inviewDuration || this.getOption('duration'),
-					delay: parent.dataset.inviewDelay || this.getOption('delay'),
-					ease: parent.dataset.inviewEase || this.getOption('ease'),
-					stagger: {
-						each: parent.dataset.inviewStagger || this.getOption('stagger'),
-						from: 'start',
-					},
-				})
-				parent.classList.add('has-viewed')
+				try {
+					await gsap.to(animatedElements, {
+						...animationToProperties,
+						duration: parent.dataset.inviewDuration || this.getOption('duration'),
+						delay: parent.dataset.inviewDelay || this.getOption('delay'),
+						ease: parent.dataset.inviewEase || this.getOption('ease'),
+						stagger: {
+							each: parent.dataset.inviewStagger || this.getOption('stagger'),
+							from: 'start',
+						},
+					})
+					parent.classList.add('has-viewed')
+
+					// Run custom function declared in 'data-inview-call' attribute
+					if (parent.dataset.inviewCall) {
+						try {
+							const fn = new Function(parent.dataset.inviewCall)
+							fn()
+						} catch (error) {
+							console.error('Error running custom function:', error)
+						}
+					}
+
+					// Check if any child elements have 'data-inview-call' attribute
+					const childElements = parent.querySelectorAll(':scope [data-inview-call]')
+					childElements.forEach((child) => {
+						const childTrigger = ScrollTrigger.create({
+							trigger: child,
+							onEnter: () => {
+								if (child.dataset.inviewCall) {
+									try {
+										const fn = new Function(child.dataset.inviewCall)
+										fn()
+									} catch (error) {
+										console.error('Error running custom function:', error)
+									}
+								}
+							},
+						})
+						this.triggers.push(childTrigger)
+					})
+				} catch (error) {
+					console.error('Error animating elements:', error)
+				}
 			},
 			markers: parent.hasAttribute('data-inview-debug') ? true : false,
 			toggleClass: {

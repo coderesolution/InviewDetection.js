@@ -34,7 +34,7 @@ export default class InviewDetection {
 		return this.options[optionName]
 	}
 
-	// Initialization function
+	// Initialisation function
 	init() {
 		try {
 			// Convert elements to an array and loop through each

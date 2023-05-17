@@ -189,16 +189,6 @@ export default class InviewDetection {
 		}
 	}
 
-	// Add this method to the InviewDetection class
-	executeCustomFunction(fnCall) {
-		try {
-			const fn = new Function(fnCall)
-			fn()
-		} catch (error) {
-			console.error('Error running custom function:', error)
-		}
-	}
-
 	// Function to animate the elements
 	animateElements(parent, animatedElements, index) {
 		let animationFromProperties = this.getOption('animationFrom')
@@ -226,40 +216,22 @@ export default class InviewDetection {
 			trigger: parent,
 			start: parent.dataset.inviewStart || this.getOption('start'),
 			onEnter: async () => {
-				// Animate the elements when they enter the viewport
-				try {
-					await gsap.to(animatedElements, {
-						...animationToProperties,
-						duration: parent.dataset.inviewDuration || this.getOption('duration'),
-						delay: parent.dataset.inviewDelay || this.getOption('delay'),
-						ease: parent.dataset.inviewEase || this.getOption('ease'),
-						stagger: {
-							each: parent.dataset.inviewStagger || this.getOption('stagger'),
-							from: 'start',
-						},
-					})
-					parent.classList.add('has-viewed')
-
-					// Run custom function declared in 'data-inview-call' attribute
-					if (parent.dataset.inviewCall) {
-						this.executeCustomFunction(parent.dataset.inviewCall)
-					}
-
-					// Check if any child elements have 'data-inview-call' attribute
-					const childElements = parent.querySelectorAll(':scope [data-inview-call]')
-					childElements.forEach((child) => {
-						const childTrigger = ScrollTrigger.create({
-							trigger: child,
-							onEnter: () => {
-								if (child.dataset.inviewCall) {
-									this.executeCustomFunction(child.dataset.inviewCall)
-								}
-							},
-						})
-						this.triggers.push(childTrigger)
-					})
-				} catch (error) {
-					console.error('Error animating elements:', error)
+				await this.runAnimation(parent, animatedElements, animationToProperties)
+			},
+			onEnterBack: async () => {
+				if (parent.hasAttribute('data-inview-repeat')) {
+					gsap.set(animatedElements, animationFromProperties)
+					await this.runAnimation(parent, animatedElements, animationToProperties)
+				}
+			},
+			onLeave: () => {
+				if (parent.hasAttribute('data-inview-repeat')) {
+					gsap.set(animatedElements, animationFromProperties)
+				}
+			},
+			onLeaveBack: () => {
+				if (parent.hasAttribute('data-inview-repeat')) {
+					gsap.set(animatedElements, animationFromProperties)
 				}
 			},
 			markers: parent.hasAttribute('data-inview-debug') ? true : false,
@@ -272,9 +244,27 @@ export default class InviewDetection {
 		// Store the ScrollTrigger instance
 		this.triggers.push(trigger)
 
-		/* Debug mode */
+		// Debug mode
 		if (parent.hasAttribute('data-inview-debug')) {
 			this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index)
+		}
+	}
+
+	async runAnimation(parent, animatedElements, animationToProperties) {
+		try {
+			await gsap.to(animatedElements, {
+				...animationToProperties,
+				duration: parent.dataset.inviewDuration || this.getOption('duration'),
+				delay: parent.dataset.inviewDelay || this.getOption('delay'),
+				ease: parent.dataset.inviewEase || this.getOption('ease'),
+				stagger: {
+					each: parent.dataset.inviewStagger || this.getOption('stagger'),
+					from: 'start',
+				},
+			})
+			parent.classList.add('has-viewed')
+		} catch (error) {
+			console.error('Error animating elements:', error)
 		}
 	}
 

@@ -45,6 +45,7 @@ export default class InviewDetection {
     addSplitElement(splitElement: any, animatedElements: any): void;
     orderAnimatedElements(animatedElements: any): void;
     animateElements(parent: any, animatedElements: any, index: any): void;
+    runAnimation(parent: any, animatedElements: any, animationToProperties: any): Promise<void>;
     debugMode(parent: any, animatedElements: any, animationFromProperties: any, animationToProperties: any, index: any): void;
     refresh(): void;
     stop(): void;

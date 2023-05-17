@@ -18,6 +18,17 @@
     return _extends.apply(this, arguments);
   }
 
+  function _catch(body, recover) {
+    try {
+      var result = body();
+    } catch (e) {
+      return recover(e);
+    }
+    if (result && result.then) {
+      return result.then(void 0, recover);
+    }
+    return result;
+  }
   var InviewDetection = /*#__PURE__*/function () {
     function InviewDetection(options) {
       if (options === void 0) {
@@ -237,7 +248,8 @@
     // Function to animate the elements
     ;
     _proto.animateElements = function animateElements(parent, animatedElements, index) {
-      var _this3 = this;
+      var _this3 = this,
+        _this4 = this;
       var animationFromProperties = this.getOption('animationFrom');
       var animationToProperties = this.getOption('animationTo');
       try {
@@ -260,18 +272,35 @@
       var trigger = ScrollTrigger.create({
         trigger: parent,
         start: parent.dataset.inviewStart || this.getOption('start'),
-        onEnter: function onEnter() {
-          // Animate the elements when they enter the viewport
-          gsap.to(animatedElements, _extends({}, animationToProperties, {
-            duration: parent.dataset.inviewDuration || _this3.getOption('duration'),
-            delay: parent.dataset.inviewDelay || _this3.getOption('delay'),
-            ease: parent.dataset.inviewEase || _this3.getOption('ease'),
-            stagger: {
-              each: parent.dataset.inviewStagger || _this3.getOption('stagger'),
-              from: 'start'
-            }
-          }));
-          parent.classList.add('has-viewed');
+        onEnter: function () {
+          try {
+            return Promise.resolve(_this3.runAnimation(parent, animatedElements, animationToProperties)).then(function () {});
+          } catch (e) {
+            return Promise.reject(e);
+          }
+        },
+        onEnterBack: function () {
+          try {
+            var _temp = function () {
+              if (parent.hasAttribute('data-inview-repeat')) {
+                gsap.set(animatedElements, animationFromProperties);
+                return Promise.resolve(_this4.runAnimation(parent, animatedElements, animationToProperties)).then(function () {});
+              }
+            }();
+            return Promise.resolve(_temp && _temp.then ? _temp.then(function () {}) : void 0);
+          } catch (e) {
+            return Promise.reject(e);
+          }
+        },
+        onLeave: function onLeave() {
+          if (parent.hasAttribute('data-inview-repeat')) {
+            gsap.set(animatedElements, animationFromProperties);
+          }
+        },
+        onLeaveBack: function onLeaveBack() {
+          if (parent.hasAttribute('data-inview-repeat')) {
+            gsap.set(animatedElements, animationFromProperties);
+          }
         },
         markers: parent.hasAttribute('data-inview-debug') ? true : false,
         toggleClass: {
@@ -283,13 +312,34 @@
       // Store the ScrollTrigger instance
       this.triggers.push(trigger);
 
-      /* Debug mode */
+      // Debug mode
       if (parent.hasAttribute('data-inview-debug')) {
         this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index);
       }
-    }
-
-    // Function for debug mode logging
+    };
+    _proto.runAnimation = function runAnimation(parent, animatedElements, animationToProperties) {
+      try {
+        var _this5 = this;
+        var _temp2 = _catch(function () {
+          return Promise.resolve(gsap.to(animatedElements, _extends({}, animationToProperties, {
+            duration: parent.dataset.inviewDuration || _this5.getOption('duration'),
+            delay: parent.dataset.inviewDelay || _this5.getOption('delay'),
+            ease: parent.dataset.inviewEase || _this5.getOption('ease'),
+            stagger: {
+              each: parent.dataset.inviewStagger || _this5.getOption('stagger'),
+              from: 'start'
+            }
+          }))).then(function () {
+            parent.classList.add('has-viewed');
+          });
+        }, function (error) {
+          console.error('Error animating elements:', error);
+        });
+        return Promise.resolve(_temp2 && _temp2.then ? _temp2.then(function () {}) : void 0);
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    } // Function for debug mode logging
     ;
     _proto.debugMode = function debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index) {
       console.group("InviewDetection() debug instance (" + (index + 1) + ")");

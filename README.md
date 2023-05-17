@@ -8,7 +8,7 @@ A powerful javascript library to create sequential animations based on in-view d
  - Custom queuing and animations
  - Staggered text animations with SplitText
  - Debugging mode
- - 3kb in size
+ - Lightweight (>3Kb gzipped)
 
 ## Dependencies
 The following <u>must</u> be instantiated before:

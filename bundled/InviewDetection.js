@@ -58,7 +58,7 @@
       return this.options[optionName];
     }
 
-    // Initialization function
+    // Initialisation function
     ;
     _proto.init = function init() {
       var _this = this;

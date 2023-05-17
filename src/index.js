@@ -189,6 +189,16 @@ export default class InviewDetection {
 		}
 	}
 
+	// Add this method to the InviewDetection class
+	executeCustomFunction(fnCall) {
+		try {
+			const fn = new Function(fnCall)
+			fn()
+		} catch (error) {
+			console.error('Error running custom function:', error)
+		}
+	}
+
 	// Function to animate the elements
 	animateElements(parent, animatedElements, index) {
 		let animationFromProperties = this.getOption('animationFrom')
@@ -232,12 +242,7 @@ export default class InviewDetection {
 
 					// Run custom function declared in 'data-inview-call' attribute
 					if (parent.dataset.inviewCall) {
-						try {
-							const fn = new Function(parent.dataset.inviewCall)
-							fn()
-						} catch (error) {
-							console.error('Error running custom function:', error)
-						}
+						this.executeCustomFunction(parent.dataset.inviewCall)
 					}
 
 					// Check if any child elements have 'data-inview-call' attribute
@@ -247,12 +252,7 @@ export default class InviewDetection {
 							trigger: child,
 							onEnter: () => {
 								if (child.dataset.inviewCall) {
-									try {
-										const fn = new Function(child.dataset.inviewCall)
-										fn()
-									} catch (error) {
-										console.error('Error running custom function:', error)
-									}
+									this.executeCustomFunction(child.dataset.inviewCall)
 								}
 							},
 						})

@@ -56,6 +56,13 @@ export default class InviewDetection {
 				// Order the animated elements based on their 'order' property
 				this.orderAnimatedElements(animatedElements)
 
+				let animationFromProperties = this.getOption('animationFrom')
+
+				// Check if the parent has custom animation properties defined in 'data-inview-from'
+				if (parent.dataset.inviewFrom) {
+					animationFromProperties = JSON.parse(parent.dataset.inviewFrom)
+				}
+
 				// Animate the elements
 				this.animateElements(parent, animatedElements, index)
 			})
@@ -207,22 +214,24 @@ export default class InviewDetection {
 		let animationFromProperties = this.getOption('animationFrom')
 		let animationToProperties = this.getOption('animationTo')
 
-		try {
-			// Check if the parent has custom animation properties defined in 'data-inviewFrom' and 'data-inviewTo'
-			if (parent.dataset.inviewFrom) {
-				animationFromProperties = JSON.parse(parent.dataset.inviewFrom)
-			}
+		animatedElements.forEach((element) => {
+			try {
+				// Check if the element has custom animation properties defined in 'data-inview-from' and 'data-inview-to'
+				if (element.dataset.inviewFrom) {
+					animationFromProperties = JSON.parse(element.dataset.inviewFrom)
+				}
 
-			if (parent.dataset.inviewTo) {
-				animationToProperties = JSON.parse(parent.dataset.inviewTo)
-			}
-		} catch (error) {
-			// Catch and log any errors
-			console.error('Error parsing JSON', error)
-		}
+				if (element.dataset.inviewTo) {
+					animationToProperties = JSON.parse(element.dataset.inviewTo)
+				}
 
-		// Set initial animation properties for the animated elements
-		gsap.set(animatedElements, animationFromProperties)
+				// Set initial animation properties for the animated elements
+				gsap.set(element, animationFromProperties)
+			} catch (error) {
+				// Catch and log any errors
+				console.error('Error parsing JSON', error)
+			}
+		})
 
 		// Create a ScrollTrigger instance for the parent element
 		const trigger = ScrollTrigger.create({

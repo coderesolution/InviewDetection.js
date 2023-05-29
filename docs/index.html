@@ -11,28 +11,142 @@
 		<script type="module" src="./main.js"></script>
 	</head>
 	<body class="main">
-		<section>
-			<p data-inview data-inview-repeat>Top</p>
-		</section>
-		<section>
-			<p data-inview data-inview-delay="3">One</p>
-		</section>
-		<section>
-			<div data-inview data-inview-repeat data-inview-scope data-inview-debug data-inview-from='{"x": "-100", "rotation": "20"}' data-inview-to='{"x": "0", "rotation": "0"}'>
-				<p data-inview-child data-inview-order="2">Two A<br>Two A2<br>Two A3<br>Two A4</p>
-				<p data-inview-child data-inview-order="5">Two B</p>
-				<p data-inview-child data-inview-order="1">Two C</p>
+
+		<section id="sequencing" class="section -sequence">
+			<div class="section_label">
+				<div class="label_heading">Sequencial Animations</div>
+				<div class="label_description">
+					<p>Animate multiple elements when their parent comes into view</p>
+				</div>
+			</div>
+			<div class="section_canvas" data-inview data-inview-scope>
+				<div class="boxes">
+					<div class="box" data-inview-child>1</div>
+					<div class="box" data-inview-child>2</div>
+					<div class="box" data-inview-child>3</div>
+					<div class="box" data-inview-child>4</div>
+					<div class="box" data-inview-child>5</div>
+					<div class="box" data-inview-child>6</div>
+				</div>
 			</div>
 		</section>
-		<section data-inview data-inview-scope>
-			<div data-inview-split>
-				<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Donec id elit non mi porta gravida at eget metus. Nulla vitae elit libero, a pharetra augue.</p>
-				<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Donec id elit non mi porta gravida at eget metus. Nulla vitae elit libero, a pharetra augue.</p>
-				<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Donec id elit non mi porta gravida at eget metus. Nulla vitae elit libero, a pharetra augue.</p>
+
+		<section id="standalone" class="section -standalone">
+			<div class="section_label">
+				<div class="label_heading">Standalone Animations</div>
+				<div class="label_description">
+					<p>Animate a single element when comes into view</p>
+				</div>
+			</div>
+			<div class="section_canvas">
+				<div class="boxes">
+					<div class="box" data-inview>1</div>
+					<div class="box" data-inview>2</div>
+					<div class="box" data-inview data-inview-from='{"x": 200, "y": 200, "backgroundColor": "#fff", "rotation": 20}' data-inview-to='{"x": 10, "y": 20, "backgroundColor": "#00ff6e", "rotation": 0}'>3</div>
+				</div>
 			</div>
 		</section>
-		<section data-inview data-inview-scope>
-			<p data-inview-child>Three</p>
+
+		<section id="splitting" class="section -splitting">
+			<div class="section_label">
+				<div class="label_heading">Text Splitting</div>
+				<div class="label_description">
+					<p>Animate lines of text when their parent comes into view</p>
+				</div>
+			</div>
+			<div class="section_canvas" data-inview data-inview-scope>
+				<div class="lines" data-inview-split>
+					<p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum.</p>
+					<p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.</p>
+					<p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Maecenas faucibus mollis interdum.</p>
+				</div>
+			</div>
 		</section>
+
+		<section id="ordering" class="section -ordering">
+			<div class="section_label">
+				<div class="label_heading">Custom Ordering</div>
+				<div class="label_description">
+					<p>Adjust the animations sequence</p>
+				</div>
+			</div>
+			<div class="section_canvas" data-inview data-inview-scope>
+				<div class="boxes">
+					<div class="box" data-inview-child data-inview-order="2">3</div>
+					<div class="box" data-inview-child data-inview-order="1">2</div>
+					<div class="box" data-inview-child data-inview-order="0">1</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="animations" class="section -animations">
+			<div class="section_label">
+				<div class="label_heading">Custom Animations</div>
+				<div class="label_description">
+					<p>Create custom animations</p>
+				</div>
+			</div>
+			<div class="section_canvas" data-inview data-inview-scope data-inview-from='{"x": 200, "y": 200, "backgroundColor": "#fff", "rotation": 20}' data-inview-to='{"x": 10, "y": 20, "backgroundColor": "#00ff6e", "rotation": 0}'>
+				<div class="boxes">
+					<div class="box" data-inview-child>1</div>
+					<div class="box" data-inview-child>2</div>
+					<div class="box" data-inview-child>3</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="repeating" class="section -repeating">
+			<div class="section_label">
+				<div class="label_heading">Repeating Animations</div>
+				<div class="label_description">
+					<p>Reanimate elements when they re-enter the viewport</p>
+				</div>
+			</div>
+			<div class="section_canvas">
+				<div class="boxes">
+					<div class="box" data-inview data-inview-repeat>1</div>
+					<div class="box" data-inview data-inview-repeat>2</div>
+					<div class="box" data-inview data-inview-repeat>3</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="screens" class="section -screens -wip">
+			<div class="section_label">
+				<div class="label_heading">Screen Size</div>
+				<div class="label_description">
+					<p>Only apply to specific screen-sizes</p>
+				</div>
+			</div>
+			<div class="section_canvas">
+			</div>
+		</section>
+
+		<section id="debugging" class="section -debugging">
+			<div class="section_label">
+				<div class="label_heading">Debugging</div>
+				<div class="label_description">
+					<p>Useful developer consoling tools and markers</p>
+				</div>
+			</div>
+			<div class="section_canvas" data-inview data-inview-scope data-inview-debug>
+				<div class="lines" data-inview-split>
+					<p>Open the console to see useful information.</p>
+					<p>Oh and check out those markers!</p>
+				</div>
+			</div>
+		</section>
+
+		<section id="methods" class="section -methods">
+			<div class="section_label">
+				<div class="label_heading">Methods</div>
+				<div class="label_description">
+					<p>Trigger methods with JavaScript</p>
+				</div>
+			</div>
+			<div class="section_canvas">
+			</div>
+		</section>
+
 	</body>
 </html>

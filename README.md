@@ -7,6 +7,7 @@ A powerful javascript library to create sequential animations based on in-view d
  - Scoping, bind elements to parent
  - Custom queuing and animations
  - Staggered text animations with SplitText
+ - Repeatable
  - Debugging mode
  - Lightweight (>3Kb gzipped)
 
@@ -119,8 +120,8 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | `data-inview-ease` | `string` | GSAP easing. Defaults to `power4` |
 | `data-inview-order` | `number` | Apply an index to scoped elements, either `[data-inview-child]` or `[data-inview-split]` or elements specified in the respective parent's `[data-inview-scope]`. This will adjust the order of the element within the animation sequence. Negative numbers appear first, then positive numbers |
 | `data-inview-start` | `string` | When animation begins. Defaults to `top 90%` |
-| `data-inview-from` | `json` | Apply custom `gsap.from()` properties for every element (by default sets opacity to 0 and y to 20px). Example: `{"opacity": "0", "y": "20", "rotation": "0"}` |
-| `data-inview-to` | `json` | Apply custom `gsap.to()` properties for every element (by default sets opacity to 1 and y to 0). Example: `{"opacity": "1", "y": "0", "rotation": "10"}` |
+| `data-inview-from` | `json` | Apply custom `gsap.from()` properties for every element (by default sets opacity to 0 and y to 20px). Example: `{"opacity": 0, "y": 20, "rotation": 0}` |
+| `data-inview-to` | `json` | Apply custom `gsap.to()` properties for every element (by default sets opacity to 1 and y to 0). Example: `{"opacity": 1, "y": 0, "rotation": 10}` |
 | `data-inview-repeat` | | Whether or not to repeat animations when they re-enter the viewport. Disabled by default. |
 
 ### Methods

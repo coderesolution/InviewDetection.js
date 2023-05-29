@@ -219,10 +219,14 @@ export default class InviewDetection {
 				// Check if the element has custom animation properties defined in 'data-inview-from' and 'data-inview-to'
 				if (element.dataset.inviewFrom) {
 					animationFromProperties = JSON.parse(element.dataset.inviewFrom)
+				} else if (parent.dataset.inviewFrom) {
+					animationFromProperties = JSON.parse(parent.dataset.inviewFrom)
 				}
 
 				if (element.dataset.inviewTo) {
 					animationToProperties = JSON.parse(element.dataset.inviewTo)
+				} else if (parent.dataset.inviewTo) {
+					animationToProperties = JSON.parse(parent.dataset.inviewTo)
 				}
 
 				// Set initial animation properties for the animated elements

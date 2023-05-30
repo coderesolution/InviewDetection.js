@@ -19,13 +19,13 @@
 					<p>Animate multiple elements when their parent comes into view</p>
 				</div>
 			</div>
-			<div class="section_canvas" data-inview data-inview-scope data-inview-debug data-inview-from='{"x": -20, "y": -50, "opacity": 0.5, "backgroundColor": "yellow", "rotation": 0}' data-inview-to='{"x": 0, "y": 0, "opacity": 1, "backgroundColor": "pink", "rotation": 0}'>
+			<div class="section_canvas" data-inview data-inview-scope>
 				<div class="boxes">
 					<div class="box" data-inview-child>1</div>
-					<div class="box" data-inview-child data-inview-from='{"x": -200, "y": -120, "opacity": 0, "backgroundColor": "#fff", "rotation": 20}' data-inview-to='{"x": 0, "y": 0, "opacity": 1, "backgroundColor": "#00ff6e", "rotation": 0}'>2</div>
+					<div class="box" data-inview-child>2</div>
 					<div class="box" data-inview-child>3</div>
 					<div class="box" data-inview-child>4</div>
-					<div class="box" data-inview-child data-inview-from='{"x": 200, "y": 120, "opacity": 0, "backgroundColor": "#fff", "rotation": 120}' data-inview-to='{"x": 0, "y": 0, "opacity": 1, "backgroundColor": "blue", "rotation": 5}'>5</div>
+					<div class="box" data-inview-child>5</div>
 					<div class="box" data-inview-child>6</div>
 				</div>
 			</div>
@@ -40,9 +40,9 @@
 			</div>
 			<div class="section_canvas">
 				<div class="boxes">
-					<div class="box" data-inview>1</div>
-					<div class="box" data-inview>2</div>
-					<div class="box" data-inview data-inview-from='{"x": 200, "y": 200, "backgroundColor": "#fff", "rotation": 20}' data-inview-to='{"x": 10, "y": 20, "backgroundColor": "#00ff6e", "rotation": 0}'>3</div>
+					<div class="box" data-inview data-inview-from='{"y": -60, "rotation": -20}' data-inview-to='{"y": 0, "rotation": 0}'>1</div>
+					<div class="box" data-inview data-inview-from='{"x": -60, "rotation": -20}' data-inview-to='{"x": 0, "rotation": 0}'>2</div>
+					<div class="box" data-inview data-inview-from='{"x": 60, "rotation": 20}' data-inview-to='{"x": 0, "rotation": 0}'>3</div>
 				</div>
 			</div>
 		</section>

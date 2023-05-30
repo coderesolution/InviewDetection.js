@@ -212,11 +212,11 @@ export default class InviewDetection {
 
 	// Function to animate the elements
 	animateElements(parent, animatedElements, index) {
-		// Initialize animation properties
-		let animationFromProperties = this.getOption('animationFrom')
-		let animationToProperties = this.getOption('animationTo')
+		// Initialise animation property arrays
+		let animationFromPropertiesArray = []
+		let animationToPropertiesArray = []
 
-		// Initialize a new gsap timeline
+		// Initialise a new gsap timeline
 		let timeline = gsap.timeline({
 			scrollTrigger: {
 				trigger: parent,
@@ -247,7 +247,7 @@ export default class InviewDetection {
 			},
 		})
 
-		// Initialize a variable to hold the current time position on the timeline
+		// Initialise a variable to hold the current time position on the timeline
 		let currentTime = 0
 
 		animatedElements.forEach((element) => {
@@ -267,6 +267,10 @@ export default class InviewDetection {
 				} else if (parent.dataset.inviewTo) {
 					animationToProperties = JSON.parse(parent.dataset.inviewTo)
 				}
+
+				// Push the properties for this element to the arrays
+				animationFromPropertiesArray.push(animationFromProperties)
+				animationToPropertiesArray.push(animationToProperties)
 
 				// Set initial animation properties for the animated elements
 				gsap.set(element, animationFromProperties)
@@ -298,7 +302,7 @@ export default class InviewDetection {
 
 		// Debug mode
 		if (parent.hasAttribute('data-inview-debug')) {
-			this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index)
+			this.debugMode(parent, animatedElements, animationFromPropertiesArray, animationToPropertiesArray, index)
 		}
 	}
 

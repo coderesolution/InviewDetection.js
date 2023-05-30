@@ -8,6 +8,7 @@ export default class InviewDetection {
 			start: 'top 90%',
 			ease: 'power4',
 			stagger: 0.095,
+			staggerFrom: 'start',
 			animationFrom: {
 				opacity: 0,
 				'will-change': 'transform',
@@ -211,11 +212,49 @@ export default class InviewDetection {
 
 	// Function to animate the elements
 	animateElements(parent, animatedElements, index) {
+		// Initialize animation properties
 		let animationFromProperties = this.getOption('animationFrom')
 		let animationToProperties = this.getOption('animationTo')
 
+		// Initialize a new gsap timeline
+		let timeline = gsap.timeline({
+			scrollTrigger: {
+				trigger: parent,
+				start: parent.dataset.inviewStart || this.getOption('start'),
+				onEnter: async () => {
+					timeline.play()
+				},
+				onEnterBack: async () => {
+					if (parent.hasAttribute('data-inview-repeat')) {
+						timeline.restart()
+					}
+				},
+				onLeave: () => {
+					if (parent.hasAttribute('data-inview-repeat')) {
+						timeline.restart().pause()
+					}
+				},
+				onLeaveBack: () => {
+					if (parent.hasAttribute('data-inview-repeat')) {
+						timeline.restart().pause()
+					}
+				},
+				markers: parent.hasAttribute('data-inview-debug') ? true : false,
+				toggleClass: {
+					targets: parent,
+					className: 'is-inview',
+				},
+			},
+		})
+
+		// Initialize a variable to hold the current time position on the timeline
+		let currentTime = 0
+
 		animatedElements.forEach((element) => {
 			try {
+				let animationFromProperties = this.getOption('animationFrom')
+				let animationToProperties = this.getOption('animationTo')
+
 				// Check if the element has custom animation properties defined in 'data-inview-from' and 'data-inview-to'
 				if (element.dataset.inviewFrom) {
 					animationFromProperties = JSON.parse(element.dataset.inviewFrom)
@@ -231,66 +270,35 @@ export default class InviewDetection {
 
 				// Set initial animation properties for the animated elements
 				gsap.set(element, animationFromProperties)
-			} catch (error) {
-				// Catch and log any errors
-				console.error('Error parsing JSON', error)
+
+				// Get the stagger time
+				let staggerTime = parent.dataset.inviewStagger || this.getOption('stagger')
+
+				// Add the animation to the timeline
+				timeline.to(
+					element,
+					{
+						...animationToProperties,
+						duration: parent.dataset.inviewDuration || this.getOption('duration'),
+						delay: parent.dataset.inviewDelay || this.getOption('delay'),
+						ease: parent.dataset.inviewEase || this.getOption('ease'),
+					},
+					currentTime
+				)
+
+				// Increase the current time position by the stagger time for the next animation
+				currentTime += parseFloat(staggerTime)
+			} catch (e) {
+				console.error(`An error occurred while animating the element: ${e}`)
 			}
 		})
 
-		// Create a ScrollTrigger instance for the parent element
-		const trigger = ScrollTrigger.create({
-			trigger: parent,
-			start: parent.dataset.inviewStart || this.getOption('start'),
-			onEnter: async () => {
-				await this.runAnimation(parent, animatedElements, animationToProperties)
-			},
-			onEnterBack: async () => {
-				if (parent.hasAttribute('data-inview-repeat')) {
-					gsap.set(animatedElements, animationFromProperties)
-					await this.runAnimation(parent, animatedElements, animationToProperties)
-				}
-			},
-			onLeave: () => {
-				if (parent.hasAttribute('data-inview-repeat')) {
-					gsap.set(animatedElements, animationFromProperties)
-				}
-			},
-			onLeaveBack: () => {
-				if (parent.hasAttribute('data-inview-repeat')) {
-					gsap.set(animatedElements, animationFromProperties)
-				}
-			},
-			markers: parent.hasAttribute('data-inview-debug') ? true : false,
-			toggleClass: {
-				targets: parent,
-				className: 'is-inview',
-			},
-		})
-
-		// Store the ScrollTrigger instance
-		this.triggers.push(trigger)
+		// Pause the timeline initially, the onEnter/onEnterBack events will play/restart it
+		timeline.pause()
 
 		// Debug mode
 		if (parent.hasAttribute('data-inview-debug')) {
 			this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index)
-		}
-	}
-
-	async runAnimation(parent, animatedElements, animationToProperties) {
-		try {
-			await gsap.to(animatedElements, {
-				...animationToProperties,
-				duration: parent.dataset.inviewDuration || this.getOption('duration'),
-				delay: parent.dataset.inviewDelay || this.getOption('delay'),
-				ease: parent.dataset.inviewEase || this.getOption('ease'),
-				stagger: {
-					each: parent.dataset.inviewStagger || this.getOption('stagger'),
-					from: 'start',
-				},
-			})
-			parent.classList.add('has-viewed')
-		} catch (error) {
-			console.error('Error animating elements:', error)
 		}
 	}
 
@@ -307,6 +315,7 @@ export default class InviewDetection {
 			start: this.getOption('start'),
 			ease: this.getOption('ease'),
 			stagger: this.getOption('stagger'),
+			staggerFrom: this.getOption('staggerFrom'),
 		})
 		console.groupEnd()
 	}

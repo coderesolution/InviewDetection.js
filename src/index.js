@@ -8,7 +8,6 @@ export default class InviewDetection {
 			start: 'top 90%',
 			ease: 'power4',
 			stagger: 0.095,
-			staggerFrom: 'start',
 			animationFrom: {
 				opacity: 0,
 				'will-change': 'transform',
@@ -18,6 +17,7 @@ export default class InviewDetection {
 				opacity: 1,
 				y: 0,
 			},
+			screen: '(min-width: 768px)',
 		}
 
 		// Merge default options with provided options
@@ -216,96 +216,105 @@ export default class InviewDetection {
 		let animationFromPropertiesArray = []
 		let animationToPropertiesArray = []
 
+		// Create a matchMedia instance
+		const matchMedia = gsap.matchMedia()
+
+		// Get the screen media query
+		const screen = parent.dataset.inviewScreen || this.getOption('screen')
+
 		// Initialise a new gsap timeline
-		let timeline = gsap.timeline({
-			scrollTrigger: {
-				trigger: parent,
-				start: parent.dataset.inviewStart || this.getOption('start'),
-				onEnter: async () => {
-					timeline.play()
-					timeline.hasPlayed = true
-				},
-				onEnterBack: async () => {
-					if (parent.hasAttribute('data-inview-repeat')) {
-						timeline.restart()
-						timeline.hasPlayed = true
-					} else if (!timeline.hasPlayed) {
+		const animation = matchMedia.add(screen, () => {
+			let timeline = gsap.timeline({
+				scrollTrigger: {
+					trigger: parent,
+					start: parent.dataset.inviewStart || this.getOption('start'),
+					invalidateOnRefresh: true,
+					onEnter: async () => {
 						timeline.play()
 						timeline.hasPlayed = true
-					}
-				},
-				onLeave: () => {
-					if (parent.hasAttribute('data-inview-repeat')) {
-						timeline.restart().pause()
-					}
-				},
-				onLeaveBack: () => {
-					if (parent.hasAttribute('data-inview-repeat')) {
-						timeline.restart().pause()
-					}
-				},
-				markers: parent.hasAttribute('data-inview-debug') ? true : false,
-				toggleClass: {
-					targets: parent,
-					className: 'is-inview',
-				},
-			},
-		})
-
-		timeline.hasPlayed = false
-
-		// Initialise a variable to hold the current time position on the timeline
-		let currentTime = 0
-
-		animatedElements.forEach((element) => {
-			try {
-				let animationFromProperties = this.getOption('animationFrom')
-				let animationToProperties = this.getOption('animationTo')
-
-				// Check if the element has custom animation properties defined in 'data-inview-from' and 'data-inview-to'
-				if (element.dataset.inviewFrom) {
-					animationFromProperties = JSON.parse(element.dataset.inviewFrom)
-				} else if (parent.dataset.inviewFrom) {
-					animationFromProperties = JSON.parse(parent.dataset.inviewFrom)
-				}
-
-				if (element.dataset.inviewTo) {
-					animationToProperties = JSON.parse(element.dataset.inviewTo)
-				} else if (parent.dataset.inviewTo) {
-					animationToProperties = JSON.parse(parent.dataset.inviewTo)
-				}
-
-				// Push the properties for this element to the arrays
-				animationFromPropertiesArray.push(animationFromProperties)
-				animationToPropertiesArray.push(animationToProperties)
-
-				// Set initial animation properties for the animated elements
-				gsap.set(element, animationFromProperties)
-
-				// Get the stagger time
-				let staggerTime = parent.dataset.inviewStagger || this.getOption('stagger')
-
-				// Add the animation to the timeline
-				timeline.to(
-					element,
-					{
-						...animationToProperties,
-						duration: parent.dataset.inviewDuration || this.getOption('duration'),
-						delay: parent.dataset.inviewDelay || this.getOption('delay'),
-						ease: parent.dataset.inviewEase || this.getOption('ease'),
 					},
-					currentTime
-				)
+					onEnterBack: async () => {
+						if (parent.hasAttribute('data-inview-repeat')) {
+							timeline.restart()
+							timeline.hasPlayed = true
+						} else if (!timeline.hasPlayed) {
+							timeline.play()
+							timeline.hasPlayed = true
+						}
+					},
+					onLeave: () => {
+						if (parent.hasAttribute('data-inview-repeat')) {
+							timeline.restart().pause()
+						}
+					},
+					onLeaveBack: () => {
+						if (parent.hasAttribute('data-inview-repeat')) {
+							timeline.restart().pause()
+						}
+					},
+					markers: parent.hasAttribute('data-inview-debug') ? true : false,
+					toggleClass: {
+						targets: parent,
+						className: 'is-inview',
+					},
+				},
+			})
 
-				// Increase the current time position by the stagger time for the next animation
-				currentTime += parseFloat(staggerTime)
-			} catch (e) {
-				console.error(`An error occurred while animating the element: ${e}`)
-			}
+			timeline.hasPlayed = false
+
+			// Initialise a variable to hold the current time position on the timeline
+			let currentTime = 0
+
+			animatedElements.forEach((element) => {
+				try {
+					let animationFromProperties = this.getOption('animationFrom')
+					let animationToProperties = this.getOption('animationTo')
+
+					// Check if the element has custom animation properties defined in 'data-inview-from' and 'data-inview-to'
+					if (element.dataset.inviewFrom) {
+						animationFromProperties = JSON.parse(element.dataset.inviewFrom)
+					} else if (parent.dataset.inviewFrom) {
+						animationFromProperties = JSON.parse(parent.dataset.inviewFrom)
+					}
+
+					if (element.dataset.inviewTo) {
+						animationToProperties = JSON.parse(element.dataset.inviewTo)
+					} else if (parent.dataset.inviewTo) {
+						animationToProperties = JSON.parse(parent.dataset.inviewTo)
+					}
+
+					// Push the properties for this element to the arrays
+					animationFromPropertiesArray.push(animationFromProperties)
+					animationToPropertiesArray.push(animationToProperties)
+
+					// Set initial animation properties for the animated elements
+					gsap.set(element, animationFromProperties)
+
+					// Get the stagger time
+					let staggerTime = parent.dataset.inviewStagger || this.getOption('stagger')
+
+					// Add the animation to the timeline
+					timeline.to(
+						element,
+						{
+							...animationToProperties,
+							duration: parent.dataset.inviewDuration || this.getOption('duration'),
+							delay: parent.dataset.inviewDelay || this.getOption('delay'),
+							ease: parent.dataset.inviewEase || this.getOption('ease'),
+						},
+						currentTime
+					)
+
+					// Increase the current time position by the stagger time for the next animation
+					currentTime += parseFloat(staggerTime)
+				} catch (e) {
+					console.error(`An error occurred while animating the element: ${e}`)
+				}
+			})
+
+			// Pause the timeline initially, the onEnter/onEnterBack events will play/restart it
+			timeline.pause()
 		})
-
-		// Pause the timeline initially, the onEnter/onEnterBack events will play/restart it
-		timeline.pause()
 
 		// Debug mode
 		if (parent.hasAttribute('data-inview-debug')) {
@@ -319,6 +328,7 @@ export default class InviewDetection {
 		console.log({
 			parent: parent,
 			elements: animatedElements,
+			screen: this.getOption('screen'),
 			animationFrom: animationFromProperties,
 			animationTo: animationToProperties,
 			duration: this.getOption('duration'),
@@ -326,7 +336,6 @@ export default class InviewDetection {
 			start: this.getOption('start'),
 			ease: this.getOption('ease'),
 			stagger: this.getOption('stagger'),
-			staggerFrom: this.getOption('staggerFrom'),
 		})
 		console.groupEnd()
 	}

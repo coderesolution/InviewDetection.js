@@ -222,7 +222,10 @@ meter {
 				margin: .5em 0;
 			}
 
-	&.-sequence .boxes { max-width: calc(calc(140px * 3) + calc(20px * 3)); }
+	&.-sequence .boxes,
+	&.-screens .boxes {
+		max-width: calc(calc(140px * 3) + calc(20px * 3));
+	}
 
 	&.-standalone .boxes { max-width: 140px; }
 

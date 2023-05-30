@@ -90,7 +90,7 @@ const inview = new InviewDetection({
 | Name | Type | Description |
 | :--- | :---: | :--- |
 | `elements` | `string` | Trigger elements, defaults to `data-inview` |
-| `screen` | `string` | Set media query conditions via matchMedia to target specific screen sizes (defaults to `'(min-width: 768px)'`) |
+| `screen` | `string` | Set media query conditions via matchMedia to target specific screen sizes (defaults to `'(min-width: 768px)'`). Use 'all' for every size. |
 | `duration` | `number` | Duration of each animation. Defaults to `1` |
 | `delay` |  `number` | Delay before animation. Defaults to `1` |
 | `start` |  `string` | ScrollTrigger's starting position. Defaults to `top 90%` |

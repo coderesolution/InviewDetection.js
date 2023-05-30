@@ -223,10 +223,15 @@ export default class InviewDetection {
 				start: parent.dataset.inviewStart || this.getOption('start'),
 				onEnter: async () => {
 					timeline.play()
+					timeline.hasPlayed = true
 				},
 				onEnterBack: async () => {
 					if (parent.hasAttribute('data-inview-repeat')) {
 						timeline.restart()
+						timeline.hasPlayed = true
+					} else if (!timeline.hasPlayed) {
+						timeline.play()
+						timeline.hasPlayed = true
 					}
 				},
 				onLeave: () => {
@@ -246,6 +251,8 @@ export default class InviewDetection {
 				},
 			},
 		})
+
+		timeline.hasPlayed = false
 
 		// Initialise a variable to hold the current time position on the timeline
 		let currentTime = 0

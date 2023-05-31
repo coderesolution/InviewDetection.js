@@ -18,17 +18,6 @@
     return _extends.apply(this, arguments);
   }
 
-  function _catch(body, recover) {
-    try {
-      var result = body();
-    } catch (e) {
-      return recover(e);
-    }
-    if (result && result.then) {
-      return result.then(void 0, recover);
-    }
-    return result;
-  }
   var InviewDetection = /*#__PURE__*/function () {
     function InviewDetection(options) {
       if (options === void 0) {
@@ -50,7 +39,8 @@
         animationTo: {
           opacity: 1,
           y: 0
-        }
+        },
+        screen: '(min-width: 768px)'
       };
 
       // Merge default options with provided options
@@ -267,110 +257,127 @@
     // Function to animate the elements
     ;
     _proto.animateElements = function animateElements(parent, animatedElements, index) {
-      var _this3 = this,
-        _this4 = this;
-      var animationFromProperties = this.getOption('animationFrom');
-      var animationToProperties = this.getOption('animationTo');
-      animatedElements.forEach(function (element) {
-        try {
-          // Check if the element has custom animation properties defined in 'data-inview-from' and 'data-inview-to'
-          if (element.dataset.inviewFrom) {
-            animationFromProperties = JSON.parse(element.dataset.inviewFrom);
-          } else if (parent.dataset.inviewFrom) {
-            animationFromProperties = JSON.parse(parent.dataset.inviewFrom);
-          }
-          if (element.dataset.inviewTo) {
-            animationToProperties = JSON.parse(element.dataset.inviewTo);
-          } else if (parent.dataset.inviewTo) {
-            animationToProperties = JSON.parse(parent.dataset.inviewTo);
-          }
+      var _this3 = this;
+      // Initialise animation property arrays
+      var animationFromPropertiesArray = [];
+      var animationToPropertiesArray = [];
 
-          // Set initial animation properties for the animated elements
-          gsap.set(element, animationFromProperties);
-        } catch (error) {
-          // Catch and log any errors
-          console.error('Error parsing JSON', error);
-        }
-      });
+      // Create a matchMedia instance
+      var matchMedia = gsap.matchMedia();
 
-      // Create a ScrollTrigger instance for the parent element
-      var trigger = ScrollTrigger.create({
-        trigger: parent,
-        start: parent.dataset.inviewStart || this.getOption('start'),
-        onEnter: function () {
-          try {
-            return Promise.resolve(_this3.runAnimation(parent, animatedElements, animationToProperties)).then(function () {});
-          } catch (e) {
-            return Promise.reject(e);
-          }
-        },
-        onEnterBack: function () {
-          try {
-            var _temp = function () {
-              if (parent.hasAttribute('data-inview-repeat')) {
-                gsap.set(animatedElements, animationFromProperties);
-                return Promise.resolve(_this4.runAnimation(parent, animatedElements, animationToProperties)).then(function () {});
+      // Get the screen media query
+      var screen = parent.dataset.inviewScreen || this.getOption('screen');
+
+      // Initialise a new gsap timeline
+      matchMedia.add(screen, function () {
+        var timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: parent,
+            start: parent.dataset.inviewStart || _this3.getOption('start'),
+            invalidateOnRefresh: true,
+            onEnter: function () {
+              try {
+                timeline.play();
+                timeline.hasPlayed = true;
+                return Promise.resolve();
+              } catch (e) {
+                return Promise.reject(e);
               }
-            }();
-            return Promise.resolve(_temp && _temp.then ? _temp.then(function () {}) : void 0);
-          } catch (e) {
-            return Promise.reject(e);
+            },
+            onEnterBack: function () {
+              try {
+                if (parent.hasAttribute('data-inview-repeat')) {
+                  timeline.restart();
+                  timeline.hasPlayed = true;
+                } else if (!timeline.hasPlayed) {
+                  timeline.play();
+                  timeline.hasPlayed = true;
+                }
+                return Promise.resolve();
+              } catch (e) {
+                return Promise.reject(e);
+              }
+            },
+            onLeave: function onLeave() {
+              if (parent.hasAttribute('data-inview-repeat')) {
+                timeline.restart().pause();
+              }
+            },
+            onLeaveBack: function onLeaveBack() {
+              if (parent.hasAttribute('data-inview-repeat')) {
+                timeline.restart().pause();
+              }
+            },
+            markers: parent.hasAttribute('data-inview-debug') ? true : false,
+            toggleClass: {
+              targets: parent,
+              className: 'is-inview'
+            }
           }
-        },
-        onLeave: function onLeave() {
-          if (parent.hasAttribute('data-inview-repeat')) {
-            gsap.set(animatedElements, animationFromProperties);
-          }
-        },
-        onLeaveBack: function onLeaveBack() {
-          if (parent.hasAttribute('data-inview-repeat')) {
-            gsap.set(animatedElements, animationFromProperties);
-          }
-        },
-        markers: parent.hasAttribute('data-inview-debug') ? true : false,
-        toggleClass: {
-          targets: parent,
-          className: 'is-inview'
-        }
-      });
+        });
+        timeline.hasPlayed = false;
 
-      // Store the ScrollTrigger instance
-      this.triggers.push(trigger);
+        // Initialise a variable to hold the current time position on the timeline
+        var currentTime = 0;
+        animatedElements.forEach(function (element) {
+          try {
+            var animationFromProperties = _this3.getOption('animationFrom');
+            var animationToProperties = _this3.getOption('animationTo');
+
+            // Check if the element has custom animation properties defined in 'data-inview-from' and 'data-inview-to'
+            if (element.dataset.inviewFrom) {
+              animationFromProperties = JSON.parse(element.dataset.inviewFrom);
+            } else if (parent.dataset.inviewFrom) {
+              animationFromProperties = JSON.parse(parent.dataset.inviewFrom);
+            }
+            if (element.dataset.inviewTo) {
+              animationToProperties = JSON.parse(element.dataset.inviewTo);
+            } else if (parent.dataset.inviewTo) {
+              animationToProperties = JSON.parse(parent.dataset.inviewTo);
+            }
+
+            // Push the properties for this element to the arrays
+            animationFromPropertiesArray.push(animationFromProperties);
+            animationToPropertiesArray.push(animationToProperties);
+
+            // Set initial animation properties for the animated elements
+            gsap.set(element, animationFromProperties);
+
+            // Get the stagger time
+            var staggerTime = parent.dataset.inviewStagger || _this3.getOption('stagger');
+
+            // Add the animation to the timeline
+            timeline.to(element, _extends({}, animationToProperties, {
+              duration: parent.dataset.inviewDuration || _this3.getOption('duration'),
+              delay: parent.dataset.inviewDelay || _this3.getOption('delay'),
+              ease: parent.dataset.inviewEase || _this3.getOption('ease')
+            }), currentTime);
+
+            // Increase the current time position by the stagger time for the next animation
+            currentTime += parseFloat(staggerTime);
+          } catch (e) {
+            console.error("An error occurred while animating the element: " + e);
+          }
+        });
+
+        // Pause the timeline initially, the onEnter/onEnterBack events will play/restart it
+        timeline.pause();
+      });
 
       // Debug mode
       if (parent.hasAttribute('data-inview-debug')) {
-        this.debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index);
+        this.debugMode(parent, animatedElements, animationFromPropertiesArray, animationToPropertiesArray, index);
       }
-    };
-    _proto.runAnimation = function runAnimation(parent, animatedElements, animationToProperties) {
-      try {
-        var _this5 = this;
-        var _temp2 = _catch(function () {
-          return Promise.resolve(gsap.to(animatedElements, _extends({}, animationToProperties, {
-            duration: parent.dataset.inviewDuration || _this5.getOption('duration'),
-            delay: parent.dataset.inviewDelay || _this5.getOption('delay'),
-            ease: parent.dataset.inviewEase || _this5.getOption('ease'),
-            stagger: {
-              each: parent.dataset.inviewStagger || _this5.getOption('stagger'),
-              from: 'start'
-            }
-          }))).then(function () {
-            parent.classList.add('has-viewed');
-          });
-        }, function (error) {
-          console.error('Error animating elements:', error);
-        });
-        return Promise.resolve(_temp2 && _temp2.then ? _temp2.then(function () {}) : void 0);
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    } // Function for debug mode logging
+    }
+
+    // Function for debug mode logging
     ;
     _proto.debugMode = function debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index) {
       console.group("InviewDetection() debug instance (" + (index + 1) + ")");
       console.log({
         parent: parent,
         elements: animatedElements,
+        screen: this.getOption('screen'),
         animationFrom: animationFromProperties,
         animationTo: animationToProperties,
         duration: this.getOption('duration'),

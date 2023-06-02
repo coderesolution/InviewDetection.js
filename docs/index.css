@@ -222,6 +222,22 @@ meter {
 				margin: .5em 0;
 			}
 
+		.buttons {
+			align-items: center;
+			column-gap: 20px;
+			display: flex;
+			justify-content: center;
+		}
+
+			.buttons button {
+				background: #fff;
+				border-radius: 4px;
+				color: #000;
+				font-size: 16px;
+				line-height: 1em;
+				padding: .75em 1em;
+			}
+
 	&.-sequence .boxes,
 	&.-screens .boxes {
 		max-width: calc(calc(140px * 3) + calc(20px * 3));

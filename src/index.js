@@ -26,6 +26,9 @@ export default class InviewDetection {
 		// Store ScrollTrigger instances
 		this.triggers = []
 
+		// Store all animated elements
+		this.animatedElements = []
+
 		// Initialize the class
 		this.init()
 	}
@@ -82,6 +85,7 @@ export default class InviewDetection {
 				parent.querySelectorAll(':scope ' + parent.dataset.inviewScope).forEach((element) => {
 					const order = parseFloat(element.dataset.inviewOrder)
 					animatedElements.push({ el: element, order: order })
+					this.animatedElements.push(element)
 				})
 			}
 		} catch (error) {
@@ -97,6 +101,7 @@ export default class InviewDetection {
 			parent.querySelectorAll(':scope [data-inview-child]').forEach((element) => {
 				const order = parseFloat(element.dataset.inviewOrder)
 				animatedElements.push({ el: element, order: order })
+				this.animatedElements.push(element)
 			})
 		} catch (error) {
 			// Catch and log any errors
@@ -181,11 +186,13 @@ export default class InviewDetection {
 							el: line,
 							order: order,
 						})
+						this.animatedElements.push(line)
 					} else {
 						animatedElements.push({
 							el: line,
 							order: false,
 						})
+						this.animatedElements.push(line)
 					}
 				})
 			} else {
@@ -350,8 +357,10 @@ export default class InviewDetection {
 		// Kill ScrollTrigger instances created in this script
 		this.triggers.forEach((st) => st.kill())
 
-		// Kill all GSAP animations of the elements
-		gsap.utils.toArray(this.getOption('elements')).forEach((element) => {
+		// Kill all animations
+		const allElements = gsap.utils.toArray(this.getOption('elements')).concat(this.animatedElements)
+
+		allElements.forEach((element) => {
 			gsap.killTweensOf(element)
 		})
 	}

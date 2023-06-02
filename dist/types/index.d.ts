@@ -37,6 +37,7 @@ export default class InviewDetection {
         screen: string;
     };
     triggers: any[];
+    animatedElements: any[];
     getOption(optionName: any): any;
     init(): void;
     addScopedElements(parent: any, animatedElements: any): void;

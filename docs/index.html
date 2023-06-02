@@ -31,6 +31,25 @@
 			</div>
 		</section>
 
+		<section id="sequencing" class="section -sequence">
+			<div class="section_label">
+				<div class="label_heading">Sequencial Animation Stagger Adjustment</div>
+				<div class="label_description">
+					<p>Adjust the time between each element animating in</p>
+				</div>
+			</div>
+			<div class="section_canvas" data-inview data-inview-scope data-inview-stagger="0.5">
+				<div class="boxes">
+					<div class="box" data-inview-child>1</div>
+					<div class="box" data-inview-child>2</div>
+					<div class="box" data-inview-child>3</div>
+					<div class="box" data-inview-child>4</div>
+					<div class="box" data-inview-child>5</div>
+					<div class="box" data-inview-child>6</div>
+				</div>
+			</div>
+		</section>
+
 		<section id="methods" class="section -methods -wip">
 			<div class="section_label">
 				<div class="label_heading">Methods</div>
@@ -59,6 +78,22 @@
 					<div class="box" data-inview data-inview-from='{"y": -60, "rotation": -20}' data-inview-to='{"y": 0, "rotation": 0}'>1</div>
 					<div class="box" data-inview data-inview-from='{"x": -60, "rotation": -20}' data-inview-to='{"x": 0, "rotation": 0}'>2</div>
 					<div class="box" data-inview data-inview-from='{"x": 60, "rotation": 20}' data-inview-to='{"x": 0, "rotation": 0}'>3</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="standalone" class="section -standalone">
+			<div class="section_label">
+				<div class="label_heading">Delayed Animations</div>
+				<div class="label_description">
+					<p>Adjust the delay before an element animates</p>
+				</div>
+			</div>
+			<div class="section_canvas">
+				<div class="boxes">
+					<div class="box" data-inview data-inview-delay="1">1</div>
+					<div class="box" data-inview data-inview-delay="2">2</div>
+					<div class="box" data-inview data-inview-delay="3">3</div>
 				</div>
 			</div>
 		</section>

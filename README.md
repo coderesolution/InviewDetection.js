@@ -117,7 +117,7 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | Name | Type | Description |
 | :--- | :---: | :--- |
 | `data-inview-debug` | | Set GSAP markers and output helpful console information. |
-| `data-inview-screen` | | Enable animation only at specific screen sizes. Defaults to `'(min-width: 768px)'` |
+| `data-inview-screen` | | Enable animation only at specific screen sizes. Defaults to `'(min-width: 768px)'`. Use 'all' for every size. |
 | `data-inview-duration` | `number` | Duration of each element transition. Defaults to `1` |
 | `data-inview-delay` | `number` | Delay before entire sequence begins. Defaults to `.4` |
 | `data-inview-stagger` | `number` | Delay between each element in sequence. Defaults to `0.095` |

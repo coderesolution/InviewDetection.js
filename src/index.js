@@ -324,7 +324,7 @@ export default class InviewDetection {
 
 	// Function for debug mode logging
 	debugMode(parent, animatedElements, animationFromProperties, animationToProperties, index) {
-		console.group(`InviewDetection() debug instance (${index + 1})`)
+		console.group(`InviewDetection() debug instance (#${index + 1})`)
 		console.log({
 			parent: parent,
 			elements: animatedElements,

@@ -50,9 +50,3 @@ oButtons.forEach( oButton => {
 	})
 
 });
-
-// setTimeout( () => {
-//
-// 	inview.restart();
-//
-// }, 3000 );

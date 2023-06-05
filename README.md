@@ -2,6 +2,15 @@
 
 A powerful javascript library to create sequential animations based on in-view detection. Powered by GSAP.
 
+## TO-DO
+ - [Feature] Add delay attribute to a child directly to increase stagger
+ - [Patch] Ensure data-inview-split works on parents in conjunction with data-inview
+
+ - [Consideration] Optional inview delay attached to image load/lazy, or class watch
+ - [Test] Test compatibility with SmoothScroller and native (alternative to Lenis)
+ - [Docs] Add code examples of every attribute, with a description
+ - [Docs] Add explanation as to what it is (streamlined animations via DOM) and what it is not (not replacing GSAP / JS animations)
+
 ## Features
  - Standalone elements
  - Scoping, bind elements to parent

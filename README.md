@@ -78,7 +78,7 @@ You can configure InviewDetection.js default via options (and overwrite them on 
 ```js
 const inview = new InviewDetection({
 	elements: '[data-inview]',
-	screen: '(min-width: 768px)',
+	screen: '(min-width: 1025px)',
 	duration: 1,
 	delay: 1,
 	start: 'top 90%',
@@ -99,7 +99,7 @@ const inview = new InviewDetection({
 | Name | Type | Description |
 | :--- | :---: | :--- |
 | `elements` | `string` | Trigger elements, defaults to `data-inview` |
-| `screen` | `string` | Set media query conditions via matchMedia to target specific screen sizes (defaults to `'(min-width: 768px)'`). Use 'all' for every size. |
+| `screen` | `string` | Set media query conditions via matchMedia to target specific screen sizes (defaults to `'(min-width: 1025px)'`). Use 'all' for every size. |
 | `duration` | `number` | Duration of each animation. Defaults to `1` |
 | `delay` |  `number` | Delay before animation. Defaults to `1` |
 | `start` |  `string` | ScrollTrigger's starting position. Defaults to `top 90%` |
@@ -126,7 +126,7 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | Name | Type | Description |
 | :--- | :---: | :--- |
 | `data-inview-debug` | | Set GSAP markers and output helpful console information. |
-| `data-inview-screen` | | Enable animation only at specific screen sizes. Defaults to `'(min-width: 768px)'`. Use 'all' for every size. |
+| `data-inview-screen` | | Enable animation only at specific screen sizes. Defaults to `'(min-width: 1025px)'`. Use 'all' for every size. |
 | `data-inview-duration` | `number` | Duration of each element transition. Defaults to `1` |
 | `data-inview-delay` | `number` | Delay before entire sequence begins. Defaults to `.4` |
 | `data-inview-stagger` | `number` | Delay between each element in sequence. Defaults to `0.095` |

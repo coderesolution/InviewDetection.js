@@ -17,7 +17,7 @@ export default class InviewDetection {
 				opacity: 1,
 				y: 0,
 			},
-			screen: '(min-width: 768px)',
+			screen: '(min-width: 1025px)',
 		}
 
 		// Merge default options with provided options

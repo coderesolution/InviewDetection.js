@@ -29,6 +29,9 @@ export default class InviewDetection {
 		// Store all animated elements
 		this.animatedElements = []
 
+		// Split order
+		this.splitOrder = 1
+
 		// Initialize the class
 		this.init()
 	}
@@ -79,17 +82,18 @@ export default class InviewDetection {
 	// Function to add scoped elements to the animatedElements array
 	addScopedElements(parent, animatedElements) {
 		try {
-			// If the parent has 'data-inview-scope' attribute,
-			// add all elements defined in this attribute to the animatedElements array
 			if (parent.dataset.inviewScope) {
-				parent.querySelectorAll(':scope ' + parent.dataset.inviewScope).forEach((element) => {
-					const order = parseFloat(element.dataset.inviewOrder)
+				const scopedElements = parent.querySelectorAll(':scope ' + parent.dataset.inviewScope)
+				scopedElements.forEach((element, index) => {
+					let order = index
+					if (element.dataset.inviewOrder) {
+						order = parseFloat(element.dataset.inviewOrder)
+					}
 					animatedElements.push({ el: element, order: order })
 					this.animatedElements.push(element)
 				})
 			}
 		} catch (error) {
-			// Catch and log any errors
 			console.error('Error adding scoped elements:', error)
 		}
 	}
@@ -97,31 +101,22 @@ export default class InviewDetection {
 	// Function to add child elements to the animatedElements array
 	addChildElements(parent, animatedElements) {
 		try {
-			// Add all elements with 'data-inview-child' attribute to the animatedElements array
-			parent.querySelectorAll(':scope [data-inview-child]').forEach((element) => {
-				const order = parseFloat(element.dataset.inviewOrder)
+			const childElements = parent.querySelectorAll(':scope [data-inview-child]')
+			childElements.forEach((element, index) => {
+				let order = index
+				if (element.dataset.inviewOrder) {
+					order = parseFloat(element.dataset.inviewOrder)
+				}
 				animatedElements.push({ el: element, order: order })
 				this.animatedElements.push(element)
 			})
 		} catch (error) {
-			// Catch and log any errors
 			console.error('Error adding child elements:', error)
 		}
 	}
 
 	// Function to find the closest parent with 'data-inview-order' attribute
 	findClosestParentOrderAttr(element) {
-		let parent = element.parentElement
-		let ancestorsIndexed = 0
-		let ancestorsLimit = 5
-		// Iterate through parent elements up to ancestorsLimit
-		while (parent && ancestorsIndexed <= ancestorsLimit) {
-			if (parent.hasAttribute('data-inview-order')) {
-				return parseFloat(parent.getAttribute('data-inview-order'))
-			}
-			parent = parent.parentElement
-			ancestorsIndexed++
-		}
 		if (element.hasAttribute('data-inview-order')) {
 			const value = element.getAttribute('data-inview-order')
 			return isNaN(+value) ? false : +value
@@ -168,7 +163,7 @@ export default class InviewDetection {
 		try {
 			// Check if splitElement is a DOM element
 			if (splitElement instanceof Element) {
-				// Find the closest parent with 'data-inview-order' attribute
+				// Find the 'data-inview-order' attribute of splitElement
 				let order = this.findClosestParentOrderAttr(splitElement)
 
 				// Split the text of the splitElement into lines
@@ -208,7 +203,9 @@ export default class InviewDetection {
 	// Function to order animated elements based on their 'order' property
 	orderAnimatedElements(animatedElements) {
 		animatedElements.sort((a, b) => {
-			return (a['order'] ?? 1) - (b['order'] ?? -1)
+			const orderA = a.order !== undefined ? a.order : animatedElements.indexOf(a)
+			const orderB = b.order !== undefined ? b.order : animatedElements.indexOf(b)
+			return orderA - orderB
 		})
 
 		// Replace each animatedElement object with its corresponding element

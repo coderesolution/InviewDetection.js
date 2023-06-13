@@ -209,18 +209,28 @@ meter {
 				width: 140px;
 			}
 
-		.lines {
-			display: block;
-			font-size: 16px;
-			line-height: 1.45em;
-			margin: 0 auto;
-			max-width: 500px;
+		.text {
+			align-items: center;
+			display: flex;
+			flex-wrap: wrap;
+			grid-gap: 20px;
+			justify-content: center;
+			margin: auto;
+			width: 100%;
 		}
 
-			.lines p {
+			.lines {
 				display: block;
-				margin: .5em 0;
+				font-size: 16px;
+				line-height: 1.45em;
+				margin: 0 auto;
+				max-width: 500px;
 			}
+
+				.lines p {
+					display: block;
+					margin: .5em 0;
+				}
 
 		.buttons {
 			align-items: center;

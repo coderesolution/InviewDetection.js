@@ -3,8 +3,12 @@
 A powerful javascript library to create sequential animations based on in-view detection. Powered by GSAP.
 
 ## TO-DO
- - [Feature] Add delay attribute to a child directly to increase stagger
  - [Patch] Ensure data-inview-split works on parents in conjunction with data-inview
+
+ - [Feature] Add delay attribute to a child directly to increase stagger
+ - [Feature] Custom Events: Bind custom events that are triggered at various points in the animation process.
+ - [Feature] Callback Functions: Call custom functions on specific triggers, for instance when the animation starts, completes, or when it loops. Pass data
+ - [Feature] JS Apply: Instantiate specific elements via JS by passing objects and arguments, like inview.apply(parent,{})
 
  - [Consideration] Optional inview delay attached to image load/lazy, or class watch
  - [Consideration] Optional refresh SplitText on resize
@@ -211,31 +215,39 @@ Stop and restart all animations.
 inview.restart();
 ```
 
+### Classes
+
+The following classes are applied during specific events.
+ * `has-viewed` - Once the element has came into view at least once.
+ * `is-inview` - Toggles when the element is in view.
+
 ## FAQ
+
 <details>
 <summary>1. The elements appear for a second before hiding and subsequently animating in</summary>
 
-##### Reason
+#### Reason
 This is because Javascript has to load before it can hide the elements.
 
-##### Solution
+#### Solution
 Here are recommended solutions:
 * Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
 * Add a page transition.
 * Add a pre-loader.
+
 </details>
 
 <details>
 
 <summary>2. My `data-inview-split` lines are splitting incorrectly</summary>
 
-##### Reason
+#### Reason
 This may happen is the text or its' container is modified by Javascript.
 
-##### Solution
+#### Solution
 As a result, it is best to try disabling autoStart by setting it false and running `inview.start()` when everything else has ran.
 
-##### Example
+#### Example
 ```html
 <script>
 // Create instance but do not start automatically
@@ -249,11 +261,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 </script>
 ```
+
 </details>
 
 ## Examples of use
 
 - [Code Resolution](https://coderesolution.com/): Digital agency partner.
+- [Enumera Molecular](#): Coming soon.
+- [Stairwell](#): Coming soon.
+- [US Foot & Ankle Specialists](#): Coming soon.
 
 ## License
 

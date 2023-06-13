@@ -17,6 +17,8 @@ export default class InviewDetection {
             y: number;
         };
         screen: string;
+        autoStart: boolean;
+        registerGsap: boolean;
     };
     options: {
         elements: string;
@@ -35,11 +37,15 @@ export default class InviewDetection {
             y: number;
         };
         screen: string;
+        autoStart: boolean;
+        registerGsap: boolean;
     };
     triggers: any[];
     animatedElements: any[];
     getOption(optionName: any): any;
     init(): void;
+    registerGsap(): Promise<any>;
+    start(): void;
     addScopedElements(parent: any, animatedElements: any): void;
     addChildElements(parent: any, animatedElements: any): void;
     findClosestParentOrderAttr(element: any): number | false;

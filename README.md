@@ -93,7 +93,9 @@ const inview = new InviewDetection({
 	animationTo: {
 		opacity: 1,
 		y: 0,
-	}
+	},
+	autoStart: true,
+	registerGsap: false
 });
 ```
 
@@ -108,6 +110,8 @@ const inview = new InviewDetection({
 | `stagger` |  `number` | Time between each animation. Defaults to `.155` |
 | `animationFrom` |  `json` | The beginning of each animation. Defaults to `{ opacity: 0, 'will-change': 'transform', y: 20 }}` |
 | `animationTo` |  `json` | The ending of each animation. Defaults to `{ opacity: 1, y: 0 }}` |
+| `autoStart` |  `boolean` | Initialise straight-away. Useful if a delay is needed to fix SplitText issues. |
+| `registerGsap` |  `boolean` | Register ScrollTrigger and SplitText automatically. |
 
 ## Instructions
 
@@ -139,6 +143,21 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 | `data-inview-repeat` | | Whether or not to repeat animations when they re-enter the viewport. Disabled by default. |
 
 ### Methods
+
+#### Start
+
+Start the initialisation if `autoStart` is set to false.
+
+```js
+inview.start();
+```
+
+Tip: This is useful if you want to start after the page has loaded, like so:
+```js
+document.addEventListener('DOMContentLoaded', (event) => {
+	inview.start();
+});
+```
 
 #### Refresh
 

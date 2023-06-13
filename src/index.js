@@ -18,6 +18,8 @@ export default class InviewDetection {
 				y: 0,
 			},
 			screen: '(min-width: 1025px)',
+			autoStart: true,
+			registerGsap: false,
 		}
 
 		// Merge default options with provided options
@@ -29,8 +31,10 @@ export default class InviewDetection {
 		// Store all animated elements
 		this.animatedElements = []
 
-		// Initialize the class
-		this.init()
+		// Start by default if set
+		if (this.getOption('autoStart')) {
+			this.init();
+		}
 	}
 
 	// Function to get a specific option
@@ -41,6 +45,12 @@ export default class InviewDetection {
 	// Initialisation function
 	init() {
 		try {
+
+			// Preload if option is set
+			if (this.getOption('registerGsap')) {
+				this.registerGsap();
+			}
+
 			// Convert elements to an array and loop through each
 			gsap.utils.toArray(this.getOption('elements')).forEach((parent, index) => {
 				// Define array to hold animated elements
@@ -74,6 +84,24 @@ export default class InviewDetection {
 			// Catch and log any errors
 			console.error('Error initialising InviewDetection:', error)
 		}
+	}
+
+	// Method to load GSAP and SplitText
+	registerGsap() {
+		return new Promise((resolve, reject) => {
+			try {
+				gsap.registerPlugin(ScrollTrigger, SplitText);
+				resolve();
+			} catch (e) {
+				reject(e);
+			}
+		})
+	}
+
+	// Function to load and initialize the class
+	start() {
+		// Initialize the class
+		this.init()
 	}
 
 	// Function to add scoped elements to the animatedElements array
@@ -194,6 +222,10 @@ export default class InviewDetection {
 						})
 						this.animatedElements.push(line)
 					}
+
+					// Set visibility to visible
+					line.style.visibility = 'visible';
+
 				})
 			} else {
 				// Log an error if splitElement is not a DOM element

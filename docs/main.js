@@ -18,7 +18,10 @@ function raf(time) {
 requestAnimationFrame(raf)
 
 /* Initialise InviewDetection.js */
-const inview = new InviewDetection();
+const inview = new InviewDetection({
+	autoStart: false,
+	registerGsap: false
+});
 
 /* Buttons */
 const oButtons = document.querySelectorAll( '.js-button' );
@@ -48,5 +51,11 @@ oButtons.forEach( oButton => {
 		}
 
 	})
+
+});
+
+document.addEventListener('DOMContentLoaded', (event) => {
+
+	inview.start();
 
 });

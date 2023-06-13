@@ -40,7 +40,9 @@
           opacity: 1,
           y: 0
         },
-        screen: '(min-width: 768px)'
+        screen: '(min-width: 1025px)',
+        autoStart: true,
+        registerGsap: false
       };
 
       // Merge default options with provided options
@@ -52,8 +54,10 @@
       // Store all animated elements
       this.animatedElements = [];
 
-      // Initialize the class
-      this.init();
+      // Start by default if set
+      if (this.getOption('autoStart')) {
+        this.init();
+      }
     }
 
     // Function to get a specific option
@@ -67,6 +71,11 @@
     _proto.init = function init() {
       var _this = this;
       try {
+        // Preload if option is set
+        if (this.getOption('registerGsap')) {
+          this.registerGsap();
+        }
+
         // Convert elements to an array and loop through each
         gsap.utils.toArray(this.getOption('elements')).forEach(function (parent, index) {
           // Define array to hold animated elements
@@ -102,6 +111,26 @@
         // Catch and log any errors
         console.error('Error initialising InviewDetection:', error);
       }
+    }
+
+    // Method to load GSAP and SplitText
+    ;
+    _proto.registerGsap = function registerGsap() {
+      return new Promise(function (resolve, reject) {
+        try {
+          gsap.registerPlugin(ScrollTrigger, SplitText);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    // Function to load and initialize the class
+    ;
+    _proto.start = function start() {
+      // Initialize the class
+      this.init();
     }
 
     // Function to add scoped elements to the animatedElements array
@@ -239,6 +268,9 @@
               });
               _this5.animatedElements.push(line);
             }
+
+            // Set visibility to visible
+            line.style.visibility = 'visible';
           });
         } else {
           // Log an error if splitElement is not a DOM element

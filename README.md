@@ -215,7 +215,11 @@ inview.restart();
 <details>
 <summary>1. The elements appear for a second before hiding and subsequently animating in</summary>
 
-This is because Javascript has to load before it can hide the elements. Here are recommended solutions:
+##### Reason
+This is because Javascript has to load before it can hide the elements.
+
+##### Solution
+Here are recommended solutions:
 * Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
 * Add a page transition.
 * Add a pre-loader.
@@ -225,9 +229,13 @@ This is because Javascript has to load before it can hide the elements. Here are
 
 <summary>2. My `data-inview-split` lines are splitting incorrectly</summary>
 
-This may happen is the text or its' container is modified by Javascript. As a result, it is best to try disabling autoStart by setting it false and running `inview.start()` when everything else has ran.
+##### Reason
+This may happen is the text or its' container is modified by Javascript.
 
-### Example
+##### Solution
+As a result, it is best to try disabling autoStart by setting it false and running `inview.start()` when everything else has ran.
+
+##### Example
 ```html
 <script>
 // Create instance but do not start automatically

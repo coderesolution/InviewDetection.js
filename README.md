@@ -61,6 +61,31 @@ We have already included the file in our [Boilerplate](https://github.com/codere
 <style>[data-inview-split] { visibility: hidden; }</style>
 ```
 
+Alternatively, you can register GSAP inside the inview initialisation:
+```html
+<script>
+	// Initialise InviewDetection and register GSAP ScrollTrigger and SplitText plugins
+	const inview = new InviewDetection({
+		registerGSAP: true
+	});
+</script>
+```
+
+If you wish to initiate the module but not start it yet, you can do so by setting the `autoStart` to false and running `inview.start()`. This can be helpful if you experience incorrect results when using the `data-inview-split` feature that uses GSAP:
+```html
+<script>
+	// Create instance but do not start automatically
+	const inview = new InviewDetection({
+		autoStart: false
+	});
+
+	// Start it when you are ready
+	document.addEventListener('DOMContentLoaded', (event) => {
+		inview.start();
+	});
+</script>
+```
+
 #### Install NPM module
 ```js
 import { gsap } from "gsap";
@@ -192,7 +217,23 @@ inview.restart();
 This is because Javascript has to load before it can hide the elements. Here are recommended solutions:
  a. Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
  b. Add a page transition.
- c. Add a preloader.
+ c. Add a pre-loader.
+
+##### 2. My `data-inview-split` lines are splitting incorrectly
+This may happen is the text or its' container is modified by Javascript. As a result, it is best to try disabling autoStart by setting it false and running `inview.start()` when everything else has ran.
+```html
+<script>
+	// Create instance but do not start automatically
+	const inview = new InviewDetection({
+		autoStart: false
+	});
+
+	// Start it when you are ready
+	document.addEventListener('DOMContentLoaded', (event) => {
+		inview.start();
+	});
+</script>
+```
 
 ## Examples of use
 

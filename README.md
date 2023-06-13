@@ -56,6 +56,9 @@ We have already included the file in our [Boilerplate](https://github.com/codere
 	// Initialise InviewDetection
 	const inview = new InviewDetection(/*options*/);
 </script>
+
+<!-- For better results, hide SplitText by default -->
+<style>[data-inview-split] { visibility: hidden; }</style>
 ```
 
 #### Install NPM module
@@ -182,6 +185,14 @@ Stop and restart all animations.
 ```js
 inview.restart();
 ```
+
+## FAQ
+
+##### 1. The elements appear for a second before hiding and subsequently animating in
+This is because Javascript has to load before it can hide the elements. Here are recommended solutions:
+ a. Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
+ b. Add a page transition.
+ c. Add a preloader.
 
 ## Examples of use
 

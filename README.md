@@ -212,37 +212,37 @@ inview.restart();
 ```
 
 ## FAQ
-
 <details>
-	<summary>1. The elements appear for a second before hiding and subsequently animating in</summary>
+<summary>1. The elements appear for a second before hiding and subsequently animating in</summary>
 
-	#### Guidance
-	This is because Javascript has to load before it can hide the elements. Here are recommended solutions:
- 	a. Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
- 	b. Add a page transition.
- 	c. Add a pre-loader.
+### Guidance
+This is because Javascript has to load before it can hide the elements. Here are recommended solutions:
+* Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
+* Add a page transition.
+* Add a pre-loader.
 </details>
 
 <details>
-	<summary>2. My `data-inview-split` lines are splitting incorrectly</summary>
 
-	#### Guidance
-	This may happen is the text or its' container is modified by Javascript. As a result, it is best to try disabling autoStart by setting it false and running `inview.start()` when everything else has ran.
+<summary>2. My `data-inview-split` lines are splitting incorrectly</summary>
 
-	#### Code
-	```html
-	<script>
-		// Create instance but do not start automatically
-		const inview = new InviewDetection({
-			autoStart: false
-		});
+### Guidance
+This may happen is the text or its' container is modified by Javascript. As a result, it is best to try disabling autoStart by setting it false and running `inview.start()` when everything else has ran.
 
-		// Start it when you are ready
-		document.addEventListener('DOMContentLoaded', (event) => {
-			inview.start();
-		});
-	</script>
-	```
+### Some Code
+```html
+<script>
+// Create instance but do not start automatically
+const inview = new InviewDetection({
+	autoStart: false
+});
+
+// Start it when you are ready
+document.addEventListener('DOMContentLoaded', (event) => {
+	inview.start();
+});
+</script>
+```
 </details>
 
 ## Examples of use

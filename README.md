@@ -246,6 +246,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	inview.start();
 });
 </script>
+
+<!-- Hide split elements on load -->
+<style>[data-inview-split] { visibility: hidden; }</style>
 ```
 
 </details>

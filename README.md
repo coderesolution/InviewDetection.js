@@ -125,6 +125,7 @@ const inview = new InviewDetection({
 	},
 	autoStart: true,
 	registerGsap: false,
+	inviewClass: 'is-inview',
 })
 ```
 
@@ -141,6 +142,7 @@ const inview = new InviewDetection({
 | `animationTo`   |  `json`   | `{"opacity": 1, "y": 0}`  | The ending of each animation.                                                                        |
 | `autoStart`     | `boolean` |           true            | Initialise straight-away. Useful if a delay is needed to fix SplitText issues.                       |
 | `registerGsap`  | `boolean` |           false           | Register ScrollTrigger and SplitText automatically.                                                  |
+| `inviewClass`   | `string`  |        `is-inview`        | Class applied to parent elements (not scoped) that are inview.                                       |
 
 ## Instructions
 

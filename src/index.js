@@ -20,6 +20,8 @@ export default class InviewDetection {
 			screen: '(min-width: 1025px)',
 			autoStart: true,
 			registerGsap: false,
+			inviewClass: 'is-inview',
+			viewedClass: 'has-viewed'
 		}
 
 		// Merge default options with provided options
@@ -338,7 +340,7 @@ export default class InviewDetection {
 					markers: parent.hasAttribute('data-inview-debug') ? true : false,
 					toggleClass: {
 						targets: parent,
-						className: 'is-inview',
+						className: this.getOption('inviewClass'),
 					},
 				},
 			})

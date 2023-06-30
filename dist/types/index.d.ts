@@ -19,6 +19,8 @@ export default class InviewDetection {
         screen: string;
         autoStart: boolean;
         registerGsap: boolean;
+        inviewClass: string;
+        viewedClass: string;
     };
     options: {
         elements: string;
@@ -39,11 +41,16 @@ export default class InviewDetection {
         screen: string;
         autoStart: boolean;
         registerGsap: boolean;
+        inviewClass: string;
+        viewedClass: string;
     };
     triggers: any[];
     animatedElements: any[];
+    listeners: {};
     getOption(optionName: any): any;
     init(): void;
+    on(eventName: any, listener: any): void;
+    emit(eventName: any, element: any): void;
     registerGsap(): Promise<any>;
     start(): void;
     addScopedElements(parent: any, animatedElements: any): void;

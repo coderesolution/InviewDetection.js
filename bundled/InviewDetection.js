@@ -27,10 +27,10 @@
       this.defaultOptions = {
         elements: '[data-inview]',
         duration: 1,
-        delay: 0.4,
+        delay: 0.1,
         start: 'top 90%',
         ease: 'power4',
-        stagger: 0.095,
+        stagger: 0.08,
         animationFrom: {
           opacity: 0,
           'will-change': 'transform',
@@ -42,7 +42,9 @@
         },
         screen: '(min-width: 1025px)',
         autoStart: true,
-        registerGsap: false
+        registerGsap: false,
+        inviewClass: 'is-inview',
+        viewedClass: 'has-viewed'
       };
 
       // Merge default options with provided options
@@ -53,6 +55,9 @@
 
       // Store all animated elements
       this.animatedElements = [];
+
+      // Store event listeners
+      this.listeners = {};
 
       // Start by default if set
       if (this.getOption('autoStart')) {
@@ -110,6 +115,26 @@
       } catch (error) {
         // Catch and log any errors
         console.error('Error initialising InviewDetection:', error);
+      }
+    }
+
+    // Function to register event listeners
+    ;
+    _proto.on = function on(eventName, listener) {
+      if (!this.listeners[eventName]) {
+        this.listeners[eventName] = [];
+      }
+      this.listeners[eventName].push(listener);
+    }
+
+    // Function to emit events
+    ;
+    _proto.emit = function emit(eventName, element) {
+      var eventListeners = this.listeners[eventName];
+      if (eventListeners) {
+        eventListeners.forEach(function (listener) {
+          listener(element);
+        });
       }
     }
 
@@ -321,9 +346,31 @@
               try {
                 timeline.play();
                 timeline.hasPlayed = true;
+                parent.classList.add(_this6.getOption('viewedClass'));
+
+                // Check if the parent has the 'data-inview-call' attribute and, if so, dispatch a custom event with the attribute's value as the event name
+                if (parent.hasAttribute('data-inview-call')) {
+                  var customEventName = parent.getAttribute('data-inview-call');
+                  window.dispatchEvent(new CustomEvent(customEventName, {
+                    detail: {
+                      target: parent
+                    }
+                  }));
+                }
+                if (_this6.listeners['onEnter']) {
+                  _this6.emit('onEnter', parent);
+                }
                 return Promise.resolve();
               } catch (e) {
                 return Promise.reject(e);
+              }
+            },
+            onLeave: function onLeave() {
+              if (parent.hasAttribute('data-inview-repeat')) {
+                timeline.restart().pause();
+              }
+              if (_this6.listeners['onLeave']) {
+                _this6.emit('onLeave', parent);
               }
             },
             onEnterBack: function () {
@@ -335,25 +382,26 @@
                   timeline.play();
                   timeline.hasPlayed = true;
                 }
+                if (_this6.listeners['onEnterBack']) {
+                  _this6.emit('onEnterBack', parent);
+                }
                 return Promise.resolve();
               } catch (e) {
                 return Promise.reject(e);
-              }
-            },
-            onLeave: function onLeave() {
-              if (parent.hasAttribute('data-inview-repeat')) {
-                timeline.restart().pause();
               }
             },
             onLeaveBack: function onLeaveBack() {
               if (parent.hasAttribute('data-inview-repeat')) {
                 timeline.restart().pause();
               }
+              if (_this6.listeners['onLeaveBack']) {
+                _this6.emit('onLeaveBack', parent);
+              }
             },
             markers: parent.hasAttribute('data-inview-debug') ? true : false,
             toggleClass: {
               targets: parent,
-              className: 'is-inview'
+              className: _this6.getOption('inviewClass')
             }
           }
         });
@@ -435,6 +483,9 @@
     ;
     _proto.refresh = function refresh() {
       ScrollTrigger.refresh();
+      if (this.listeners['refresh']) {
+        this.emit('refresh', parent);
+      }
     }
 
     // Function to stop the animations and ScrollTrigger instances
@@ -450,6 +501,9 @@
       allElements.forEach(function (element) {
         gsap.killTweensOf(element);
       });
+      if (this.listeners['stop']) {
+        this.emit('stop', parent);
+      }
     }
 
     // Function to restart the animations and reinitialise everything
@@ -462,6 +516,9 @@
 
       // Reinitialise everything
       this.init();
+      if (this.listeners['restart']) {
+        this.emit('restart', parent);
+      }
     };
     return InviewDetection;
   }();

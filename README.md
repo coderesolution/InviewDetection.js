@@ -126,11 +126,12 @@ const inview = new InviewDetection({
 	autoStart: true,
 	registerGsap: false,
 	inviewClass: 'is-inview',
+	viewedClass: 'has-viewed',
 })
 ```
 
 | Name            |   Type    |          Default          | Description                                                                                          |
-| :-------------- | :-------: | :-----------------------: | :--------------------------------------------------------------------------------------------------- |
+| :-------------- | :-------: | :-----------------------: | :--------------------------------------------------------------------------------------------------- | --- |
 | `elements`      | `string`  |       `data-inview`       | Trigger elements, defaults to                                                                        |
 | `screen`        | `string`  |  `'(min-width: 1025px)'`  | Set media query conditions via matchMedia to target specific screen sizes. Use 'all' for every size. |
 | `duration`      | `number`  |            `1`            | Duration of each animation.                                                                          |
@@ -142,7 +143,8 @@ const inview = new InviewDetection({
 | `animationTo`   |  `json`   | `{"opacity": 1, "y": 0}`  | The ending of each animation.                                                                        |
 | `autoStart`     | `boolean` |           true            | Initialise straight-away. Useful if a delay is needed to fix SplitText issues.                       |
 | `registerGsap`  | `boolean` |           false           | Register ScrollTrigger and SplitText automatically.                                                  |
-| `inviewClass`   | `string`  |        `is-inview`        | Class applied to parent elements (not scoped) that are inview.                                       |
+| `inviewClass`   | `string`  |        `is-inview`        | Class applied to parent elements (not scoped) that are inview.                                       |     |
+| `viewedClass`   | `string`  |       `has-viewed`        | Class applied to parent elements (not scoped) that have been viewed.                                 |
 
 ## Instructions
 
@@ -222,6 +224,8 @@ inview.restart()
 | :----------- | :------------------------------------------------- |
 | `is-inview`  | Once the element has came into view at least once. |
 | `has-viewed` | Toggles when the element is in view.               |
+
+The application remains the same even if the classes have been changed from their default setting.
 
 ### Events
 

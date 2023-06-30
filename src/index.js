@@ -293,6 +293,8 @@ export default class InviewDetection {
 						timeline.play()
 						timeline.hasPlayed = true
 
+						parent.classList.add(this.getOption('viewedClass'))
+
 						// Check if the parent has the 'data-inview-call' attribute and, if so, dispatch a custom event with the attribute's value as the event name
 						if (parent.hasAttribute('data-inview-call')) {
 							const customEventName = parent.getAttribute('data-inview-call')

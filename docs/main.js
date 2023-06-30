@@ -60,24 +60,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 });
 
-inview.on('onEnter', (element) => {
-	console.log('Entering top of view:', element)
+window.addEventListener('inviewEvent', (e) => {
+	const { target } = e.detail
+	console.log(`target: ${target}`)
 })
-inview.on('onLeave', (element) => {
-	console.log('Leaving bottom of view:', element)
-})
-inview.on('onEnterBack', (element) => {
-	console.log('Entering bottom of view:', element)
-})
-inview.on('onLeaveBack', (element) => {
-	console.log('Leaving top of view:', element)
-})
-inview.on('restart', () => {
-	console.log('Restarted')
-})
-inview.on('stop', (target) => {
-	console.log('Stopped', target)
-})
-inview.on('refresh', () => {
-	console.log('Refreshed')
-})
+
+// inview.on('onEnter', (element) => {
+// 	console.log('Entering top of view:', element)
+// })
+// inview.on('onLeave', (element) => {
+// 	console.log('Leaving bottom of view:', element)
+// })
+// inview.on('onEnterBack', (element) => {
+// 	console.log('Entering bottom of view:', element)
+// })
+// inview.on('onLeaveBack', (element) => {
+// 	console.log('Leaving top of view:', element)
+// })
+// inview.on('restart', () => {
+// 	console.log('Restarted')
+// })
+// inview.on('stop', (target) => {
+// 	console.log('Stopped', target)
+// })
+// inview.on('refresh', () => {
+// 	console.log('Refreshed')
+// })

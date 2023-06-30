@@ -290,6 +290,19 @@ export default class InviewDetection {
 					onEnter: async () => {
 						timeline.play()
 						timeline.hasPlayed = true
+
+						// Check if the parent has the 'data-inview-call' attribute and, if so, dispatch a custom event with the attribute's value as the event name
+						if (parent.hasAttribute('data-inview-call')) {
+							const customEventName = parent.getAttribute('data-inview-call')
+							window.dispatchEvent(
+								new CustomEvent(customEventName, {
+									detail: {
+										target: parent
+									},
+								})
+							)
+						}
+
 						if (this.listeners['onEnter']) {
 							this.emit('onEnter', parent)
 						}

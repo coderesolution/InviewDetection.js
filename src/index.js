@@ -31,9 +31,12 @@ export default class InviewDetection {
 		// Store all animated elements
 		this.animatedElements = []
 
+		// Store event listeners
+		this.listeners = {}
+
 		// Start by default if set
 		if (this.getOption('autoStart')) {
-			this.init();
+			this.init()
 		}
 	}
 
@@ -45,10 +48,9 @@ export default class InviewDetection {
 	// Initialisation function
 	init() {
 		try {
-
 			// Preload if option is set
 			if (this.getOption('registerGsap')) {
-				this.registerGsap();
+				this.registerGsap()
 			}
 
 			// Convert elements to an array and loop through each
@@ -86,14 +88,32 @@ export default class InviewDetection {
 		}
 	}
 
+	// Function to register event listeners
+	on(eventName, listener) {
+		if (!this.listeners[eventName]) {
+			this.listeners[eventName] = []
+		}
+		this.listeners[eventName].push(listener)
+	}
+
+	// Function to emit events
+	emit(eventName, element) {
+		const eventListeners = this.listeners[eventName]
+		if (eventListeners) {
+			eventListeners.forEach((listener) => {
+				listener(element)
+			})
+		}
+	}
+
 	// Method to load GSAP and SplitText
 	registerGsap() {
 		return new Promise((resolve, reject) => {
 			try {
-				gsap.registerPlugin(ScrollTrigger, SplitText);
-				resolve();
+				gsap.registerPlugin(ScrollTrigger, SplitText)
+				resolve()
 			} catch (e) {
-				reject(e);
+				reject(e)
 			}
 		})
 	}
@@ -224,8 +244,7 @@ export default class InviewDetection {
 					}
 
 					// Set visibility to visible
-					line.style.visibility = 'visible';
-
+					line.style.visibility = 'visible'
 				})
 			} else {
 				// Log an error if splitElement is not a DOM element
@@ -271,6 +290,17 @@ export default class InviewDetection {
 					onEnter: async () => {
 						timeline.play()
 						timeline.hasPlayed = true
+						if (this.listeners['onEnter']) {
+							this.emit('onEnter', parent)
+						}
+					},
+					onLeave: () => {
+						if (parent.hasAttribute('data-inview-repeat')) {
+							timeline.restart().pause()
+						}
+						if (this.listeners['onLeave']) {
+							this.emit('onLeave', parent)
+						}
 					},
 					onEnterBack: async () => {
 						if (parent.hasAttribute('data-inview-repeat')) {
@@ -280,15 +310,16 @@ export default class InviewDetection {
 							timeline.play()
 							timeline.hasPlayed = true
 						}
-					},
-					onLeave: () => {
-						if (parent.hasAttribute('data-inview-repeat')) {
-							timeline.restart().pause()
+						if (this.listeners['onEnterBack']) {
+							this.emit('onEnterBack', parent)
 						}
 					},
 					onLeaveBack: () => {
 						if (parent.hasAttribute('data-inview-repeat')) {
 							timeline.restart().pause()
+						}
+						if (this.listeners['onLeaveBack']) {
+							this.emit('onLeaveBack', parent)
 						}
 					},
 					markers: parent.hasAttribute('data-inview-debug') ? true : false,
@@ -382,6 +413,10 @@ export default class InviewDetection {
 	// Function to refresh ScrollTrigger instances
 	refresh() {
 		ScrollTrigger.refresh()
+
+		if (this.listeners['refresh']) {
+			this.emit('refresh', parent)
+		}
 	}
 
 	// Function to stop the animations and ScrollTrigger instances
@@ -395,6 +430,10 @@ export default class InviewDetection {
 		allElements.forEach((element) => {
 			gsap.killTweensOf(element)
 		})
+
+		if (this.listeners['stop']) {
+			this.emit('stop', parent)
+		}
 	}
 
 	// Function to restart the animations and reinitialise everything
@@ -406,5 +445,9 @@ export default class InviewDetection {
 
 		// Reinitialise everything
 		this.init()
+
+		if (this.listeners['restart']) {
+			this.emit('restart', parent)
+		}
 	}
 }

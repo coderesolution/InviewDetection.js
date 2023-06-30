@@ -1,11 +1,11 @@
 /* Lib */
-import InviewDetection from '../src/index';
+import InviewDetection from '../src/index'
 
 /* Demo CSS */
 import './index.css'
 
 /* Register GSAP and plugins */
-gsap.registerPlugin( ScrollTrigger, SplitText );
+gsap.registerPlugin(ScrollTrigger, SplitText)
 
 /* Lenis smooth scroll */
 const lenis = new Lenis()
@@ -20,49 +20,41 @@ requestAnimationFrame(raf)
 /* Initialise InviewDetection.js */
 const inview = new InviewDetection({
 	autoStart: false,
-	registerGsap: false
-});
+	registerGsap: false,
+})
 
 /* Buttons */
-const oButtons = document.querySelectorAll( '.js-button' );
+const oButtons = document.querySelectorAll('.js-button')
 
-oButtons.forEach( oButton => {
-
-	oButton.addEventListener( 'click', ( e ) => {
-
+oButtons.forEach((oButton) => {
+	oButton.addEventListener('click', (e) => {
 		e.preventDefault()
 
-		switch( oButton.dataset.method ) {
+		switch (oButton.dataset.method) {
 			case 'refresh':
-			inview.refresh()
-			break;
+				inview.refresh()
+				break
 
 			case 'stop':
-			inview.stop()
-			break;
+				inview.stop()
+				break
 
 			case 'restart':
-			inview.restart()
-			break;
+				inview.restart()
+				break
 
 			default:
-			console.log( 'No method' )
-
+				console.log('No method')
 		}
-
 	})
-
-});
+})
 
 document.addEventListener('DOMContentLoaded', (event) => {
-
-	inview.start();
-
-});
+	inview.start()
+})
 
 window.addEventListener('inviewEvent', (e) => {
-	const { target } = e.detail
-	console.log(`target: ${target}`)
+	console.log('target', e.detail.target)
 })
 
 // inview.on('onEnter', (element) => {

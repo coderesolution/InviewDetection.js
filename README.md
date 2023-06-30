@@ -3,20 +3,24 @@
 A powerful javascript library to create sequential animations based on in-view detection. Powered by GSAP.
 
 ## Features
- - Standalone elements
- - Scoping, bind elements to parent
- - Custom queuing and animations
- - Staggered text animations with SplitText
- - Repeatable
- - Target specific screen sizes
- - Debugging mode
- - Lightweight (>3Kb gzipped)
+
+-   Standalone elements
+-   Scoping, bind elements to parent
+-   Custom queuing and animations
+-   Trigger callbacks
+-   Staggered text animations with SplitText
+-   Repeatable
+-   Target specific screen sizes
+-   Debugging mode
+-   Lightweight (>3Kb gzipped)
 
 ## Dependencies
+
 The following <u>must</u> be instantiated before:
- - GSAP v3 (https://greensock.com/gsap/)
- - GSAP ScrollTrigger (https://greensock.com/scrolltrigger/)
- - GSAP SplitText (https://greensock.com/splittext/)
+
+-   GSAP v3 (https://greensock.com/gsap/)
+-   GSAP ScrollTrigger (https://greensock.com/scrolltrigger/)
+-   GSAP SplitText (https://greensock.com/splittext/)
 
 ## Quick start
 
@@ -41,53 +45,60 @@ We have already included the file in our [Boilerplate](https://github.com/codere
 
 <script>
 	// Register GSAP
-	gsap.registerPlugin(ScrollTrigger, SplitText);
+	gsap.registerPlugin(ScrollTrigger, SplitText)
 
 	// Initialise InviewDetection
-	const inview = new InviewDetection(/*options*/);
+	const inview = new InviewDetection(/*options*/)
 </script>
 
 <!-- For better results, hide SplitText by default -->
-<style>[data-inview-split] { visibility: hidden; }</style>
+<style>
+	[data-inview-split] {
+		visibility: hidden;
+	}
+</style>
 ```
 
 Alternatively, you can register GSAP inside the inview initialisation:
+
 ```html
 <script>
 	// Initialise InviewDetection and register GSAP ScrollTrigger and SplitText plugins
 	const inview = new InviewDetection({
-		registerGSAP: true
-	});
+		registerGSAP: true,
+	})
 </script>
 ```
 
 If you wish to initiate the module but not start it yet, you can do so by setting the `autoStart` to false and running `inview.start()`. This can be helpful if you experience incorrect results when using the `data-inview-split` feature that uses GSAP:
+
 ```html
 <script>
 	// Create instance but do not start automatically
 	const inview = new InviewDetection({
-		autoStart: false
-	});
+		autoStart: false,
+	})
 
 	// Start it when you are ready
 	document.addEventListener('DOMContentLoaded', (event) => {
-		inview.start();
-	});
+		inview.start()
+	})
 </script>
 ```
 
 #### Install NPM module
+
 ```js
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import InviewDetection from './path-to/InviewDetection';
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { SplitText } from 'gsap/SplitText'
+import InviewDetection from './path-to/InviewDetection'
 
 // Register GSAP
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger, SplitText)
 
 // Initialise InviewDetection
-const inview = new InviewDetection(/*options*/);
+const inview = new InviewDetection(/*options*/)
 ```
 
 ## Defaults
@@ -113,52 +124,53 @@ const inview = new InviewDetection({
 		y: 0,
 	},
 	autoStart: true,
-	registerGsap: false
-});
+	registerGsap: false,
+})
 ```
 
-| Name | Type | Description |
-| :--- | :---: | :--- |
-| `elements` | `string` | Trigger elements, defaults to `data-inview` |
-| `screen` | `string` | Set media query conditions via matchMedia to target specific screen sizes (defaults to `'(min-width: 1025px)'`). Use 'all' for every size. |
-| `duration` | `number` | Duration of each animation. Defaults to `1` |
-| `delay` |  `number` | Delay before animation. Defaults to `1` |
-| `start` |  `string` | ScrollTrigger's starting position. Defaults to `top 90%` |
-| `ease` |  `string` | Easing of animation ([help](https://greensock.com/docs/Easing)). Defaults to `power4` |
-| `stagger` |  `number` | Time between each animation. Defaults to `.155` |
-| `animationFrom` |  `json` | The beginning of each animation. Defaults to `{ opacity: 0, 'will-change': 'transform', y: 20 }}` |
-| `animationTo` |  `json` | The ending of each animation. Defaults to `{ opacity: 1, y: 0 }}` |
-| `autoStart` |  `boolean` | Initialise straight-away. Useful if a delay is needed to fix SplitText issues. |
-| `registerGsap` |  `boolean` | Register ScrollTrigger and SplitText automatically. |
+| Name            |   Type    |          Default          | Description                                                                                          |
+| :-------------- | :-------: | :-----------------------: | :--------------------------------------------------------------------------------------------------- |
+| `elements`      | `string`  |       `data-inview`       | Trigger elements, defaults to                                                                        |
+| `screen`        | `string`  |  `'(min-width: 1025px)'`  | Set media query conditions via matchMedia to target specific screen sizes. Use 'all' for every size. |
+| `duration`      | `number`  |            `1`            | Duration of each animation.                                                                          |
+| `delay`         | `number`  |           `.1`            | Delay before animation.                                                                              |
+| `start`         | `string`  |         `top 90%`         | ScrollTrigger's starting position.                                                                   |
+| `ease`          | `string`  |         `power4`          | Easing of animation ([help](https://greensock.com/docs/Easing)).                                     |
+| `stagger`       | `number`  |          `0.08`           | Time between each animation. Defaults to                                                             |
+| `animationFrom` |  `json`   | `{"opacity": 0, "y": 20}` | The beginning of each animation.                                                                     |
+| `animationTo`   |  `json`   | `{"opacity": 1, "y": 0}`  | The ending of each animation.                                                                        |
+| `autoStart`     | `boolean` |           true            | Initialise straight-away. Useful if a delay is needed to fix SplitText issues.                       |
+| `registerGsap`  | `boolean` |           false           | Register ScrollTrigger and SplitText automatically.                                                  |
 
 ## Instructions
 
 ### Usage
 
-| Name | Type | Description |
-| :--- | :---: | :--- |
-| `data-inview` | | Apply attribute to trigger elements that are either standalone or parents of nested items by including a `data-inview-scope` |
+| Name                |   Type   | Description                                                                                                                                                                                                           |
+| :------------------ | :------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data-inview`       |          | Apply attribute to trigger elements that are either standalone or parents of nested items by including a `data-inview-scope`                                                                                          |
 | `data-inview-scope` | `string` | Apply to `data-inview` element to specify the scope of nested elements. Use wildcards like `*`, `> *` or selectors `.class, #id`. By default, it will scope only `data-inview-child` and `data-inview-split` elements |
-| `data-inview-child` | | Apply attribute to elements that should animate when parent comes into to view |
-| `data-inview-split` | `string` | Same as `data-inview-child`, however, apply SplitText to direct text elements to animate per line. Set a value to target specific elements, i.e. `p, li` |
+| `data-inview-child` |          | Apply attribute to elements that should animate when parent comes into to view                                                                                                                                        |
+| `data-inview-split` | `string` | Same as `data-inview-child`, however, apply SplitText to direct text elements to animate per line. Set a value to target specific elements, i.e. `p, li`                                                              |
 
 ### Modifiers
 
 Apply any of the following to `[data-inview]` element to apply custom settings:
 
-| Name | Type | Description |
-| :--- | :---: | :--- |
-| `data-inview-debug` | | Set GSAP markers and output helpful console information. |
-| `data-inview-screen` | | Enable animation only at specific screen sizes. Defaults to `'(min-width: 1025px)'`. Use 'all' for every size. |
-| `data-inview-duration` | `number` | Duration of each element transition. Defaults to `1` |
-| `data-inview-delay` | `number` | Delay before entire sequence begins. Defaults to `.4` |
-| `data-inview-stagger` | `number` | Delay between each element in sequence. Defaults to `0.095` |
-| `data-inview-ease` | `string` | GSAP easing. Defaults to `power4` |
-| `data-inview-order` | `number` | Apply an index to scoped elements, either `[data-inview-child]` or `[data-inview-split]` or elements specified in the respective parent's `[data-inview-scope]`. This will adjust the order of the element within the animation sequence. Negative numbers appear first, then positive numbers |
-| `data-inview-start` | `string` | When animation begins. Defaults to `top 90%` |
-| `data-inview-from` | `json` | Apply custom `gsap.from()` properties for every element (by default sets opacity to 0 and y to 20px). Example: `{"opacity": 0, "y": 20, "rotation": 0}` |
-| `data-inview-to` | `json` | Apply custom `gsap.to()` properties for every element (by default sets opacity to 1 and y to 0). Example: `{"opacity": 1, "y": 0, "rotation": 10}` |
-| `data-inview-repeat` | | Whether or not to repeat animations when they re-enter the viewport. Disabled by default. |
+| Name                   |   Type   |          Default          | Description                                                                                                                                                                                                                                                                                    |
+| :--------------------- | :------: | :-----------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data-inview-debug`    |          |                           | Set GSAP markers and output helpful console information.                                                                                                                                                                                                                                       |
+| `data-inview-screen`   |          |  `'(min-width: 1025px)'`  | Enable animation only at specific screen sizes. Use 'all' for every size.                                                                                                                                                                                                                      |
+| `data-inview-duration` | `number` |            `1`            | Duration of each element transition.                                                                                                                                                                                                                                                           |
+| `data-inview-delay`    | `number` |           `.1`            | Delay before entire sequence begins.                                                                                                                                                                                                                                                           |
+| `data-inview-stagger`  | `number` |          `0.08`           | Delay between each element in sequence.                                                                                                                                                                                                                                                        |
+| `data-inview-ease`     | `string` |         `power4`          | GSAP easing.                                                                                                                                                                                                                                                                                   |
+| `data-inview-order`    | `number` |                           | Apply an index to scoped elements, either `[data-inview-child]` or `[data-inview-split]` or elements specified in the respective parent's `[data-inview-scope]`. This will adjust the order of the element within the animation sequence. Negative numbers appear first, then positive numbers |
+| `data-inview-start`    | `string` |         `top 90%`         | When animation begins.                                                                                                                                                                                                                                                                         |
+| `data-inview-from`     |  `json`  | `{"opacity": 0, "y": 20}` | Apply custom `gsap.from()` properties for every element. Example: `{"opacity": 0, "y": 20, "rotation": 0}`                                                                                                                                                                                     |
+| `data-inview-to`       |  `json`  | `{"opacity": 1, "y": 0}`  | Apply custom `gsap.to()` properties for every element. Example: `{"opacity": 1, "y": 0, "rotation": 10}`                                                                                                                                                                                       |
+| `data-inview-repeat`   |          |                           | Whether or not to repeat animations when they re-enter the viewport. Disabled by default.                                                                                                                                                                                                      |
+| `data-inview-call`     | `string` |                           | Fire custom events when elements enter, re-enter. Example: `data-inview-call="scrollEvent"`.                                                                                                                                                                                                   |
 
 ### Methods
 
@@ -167,14 +179,15 @@ Apply any of the following to `[data-inview]` element to apply custom settings:
 Start the initialisation if `autoStart` is set to false.
 
 ```js
-inview.start();
+inview.start()
 ```
 
 Tip: This is useful if you want to start after the page has loaded, like so:
+
 ```js
 document.addEventListener('DOMContentLoaded', (event) => {
-	inview.start();
-});
+	inview.start()
+})
 ```
 
 #### Refresh
@@ -182,7 +195,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 Update ScrollTrigger calculations.
 
 ```js
-inview.refresh();
+inview.refresh()
 ```
 
 #### Stop
@@ -190,7 +203,7 @@ inview.refresh();
 Stop all animations so anything not yet visible does not load in.
 
 ```js
-inview.stop();
+inview.stop()
 ```
 
 #### Restart
@@ -198,14 +211,82 @@ inview.stop();
 Stop and restart all animations.
 
 ```js
-inview.restart();
+inview.restart()
 ```
 
 ### Classes
 
-The following classes are applied during specific events.
- * `has-viewed` - Once the element has came into view at least once.
- * `is-inview` - Toggles when the element is in view.
+| Class        | Application                                        |
+| :----------- | :------------------------------------------------- |
+| `is-inview`  | Once the element has came into view at least once. |
+| `has-viewed` | Toggles when the element is in view.               |
+
+### Events
+
+#### Element enter/leave the viewport
+
+Detect when a animation (re)fires from a particular direction.
+
+```js
+inview.on('onEnter', (element) => {
+	console.log('Entering top of view:', element)
+})
+inview.on('onLeave', (element) => {
+	console.log('Leaving bottom of view:', element)
+})
+inview.on('onEnterBack', (element) => {
+	console.log('Entering bottom of view:', element)
+})
+inview.on('onLeaveBack', (element) => {
+	console.log('Leaving top of view:', element)
+})
+```
+
+#### Refresh
+
+Detect when the `inview.refresh()` method is fired.
+
+```js
+inview.on('refresh', () => {
+	console.log('Refreshed')
+})
+```
+
+#### Stop
+
+Detect when the `inview.stop()` method is fired.
+
+```js
+inview.on('stop', (target) => {
+	console.log('Stopped', target)
+})
+```
+
+#### Restart
+
+Detect when the `inview.restart()` method is fired.
+
+```js
+inview.on('restart', () => {
+	console.log('Restarted')
+})
+```
+
+### Custom Callbacks
+
+#### Events
+
+Fire custom events when elements enter or leave the viewport.
+
+```html
+<div data-inview data-inview-call="inviewEvent">Trigger</div>
+```
+
+```js
+window.addEventListener('inviewEvent', (e) => {
+	console.log('target', e.detail.target)
+})
+```
 
 ## FAQ
 
@@ -213,13 +294,16 @@ The following classes are applied during specific events.
 <summary>1. The elements appear for a second before hiding and subsequently animating in</summary>
 
 #### Reason
+
 This is because Javascript has to load before it can hide the elements.
 
 #### Solution
+
 Here are recommended solutions:
-* Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
-* Add a page transition.
-* Add a pre-loader.
+
+-   Use critical CSS to apply essential styles on load, such as hiding above-the-fold elements that you wish to animate.
+-   Add a page transition.
+-   Add a pre-loader.
 
 </details>
 
@@ -228,37 +312,44 @@ Here are recommended solutions:
 <summary>2. My `data-inview-split` lines are splitting incorrectly</summary>
 
 #### Reason
+
 This may happen is the text or its' container is modified by Javascript.
 
 #### Solution
+
 As a result, it is best to try disabling autoStart by setting it false and running `inview.start()` when everything else has ran.
 
 #### Example
+
 ```html
 <script>
-// Create instance but do not start automatically
-const inview = new InviewDetection({
-	autoStart: false
-});
+	// Create instance but do not start automatically
+	const inview = new InviewDetection({
+		autoStart: false,
+	})
 
-// Start it when you are ready
-document.addEventListener('DOMContentLoaded', (event) => {
-	inview.start();
-});
+	// Start it when you are ready
+	document.addEventListener('DOMContentLoaded', (event) => {
+		inview.start()
+	})
 </script>
 
 <!-- Hide split elements on load -->
-<style>[data-inview-split] { visibility: hidden; }</style>
+<style>
+	[data-inview-split] {
+		visibility: hidden;
+	}
+</style>
 ```
 
 </details>
 
 ## Examples of use
 
-- [Code Resolution](https://coderesolution.com/): Digital agency partner.
-- [Enumera Molecular](#): Coming soon.
-- [Stairwell](#): Coming soon.
-- [US Foot & Ankle Specialists](#): Coming soon.
+-   [Code Resolution](https://coderesolution.com/): Digital agency partner.
+-   [Enumera Molecular](#): Coming soon.
+-   [Stairwell](#): Coming soon.
+-   [US Foot & Ankle Specialists](#): Coming soon.
 
 ## License
 

@@ -4,10 +4,10 @@ export default class InviewDetection {
 		this.defaultOptions = {
 			elements: '[data-inview]',
 			duration: 1,
-			delay: 0.4,
+			delay: 0.1,
 			start: 'top 90%',
 			ease: 'power4',
-			stagger: 0.095,
+			stagger: 0.08,
 			animationFrom: {
 				opacity: 0,
 				'will-change': 'transform',
